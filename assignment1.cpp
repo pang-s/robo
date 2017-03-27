@@ -32,6 +32,7 @@ int walk_x = 0;
 
 int walk_dir_angle = 90;
 int animation_time = 0;
+float ring_turning_angle = 0;
 
 // vase
 const int N = 50;  // Total number of vertices on the base curve
@@ -39,118 +40,9 @@ const int N = 50;  // Total number of vertices on the base curve
 
 float vx[N] = {9.5, 8.2, 7, 6.2,
     6, 6.2, 6.8, 7.6, 8.5, 8.7};
-//float vx[N] = {10, 8, 7, 6,
-//    6, 6, 7, 8, 8.5, 7, 6, 5, 4.7, 4.5};
 float vy[N] = {0, 1, 2, 3,
     4, 5, 6, 7, 8, 9};
-//float vy[N] = {35, 36, 37, 38,
-//    39, 40, 41, 42, 43, 43, 42, 41, 40, 39};
 float vz[N] = {0};
-
-//// now its on the floor
-//float vx[N] = {9.5, 8.2, 7, 6.2,
-//    6, 6.2, 6.8, 7.6, 8.5, 7, 6.1, 5.3, 4.7, 4.5};
-////float vx[N] = {10, 8, 7, 6,
-////    6, 6, 7, 8, 8.5, 7, 6, 5, 4.7, 4.5};
-//float vy[N] = {0, 1, 2, 3,
-//    4, 5, 6, 7, 8, 8, 7, 6, 5, 4};
-////float vy[N] = {35, 36, 37, 38,
-////    39, 40, 41, 42, 43, 43, 42, 41, 40, 39};
-//float vz[N] = {0};
-
-
-// milk bottle!!
-//float vx[N] = {
-//    11.4, 11.3, 11.2, 11.1, 11, 10.5, 9.5, 8.2, 7, 6.2,
-//    6, 6.2, 6.8, 7.6, 8.5, 7, 6.1, 5.3, 4.7, 4.5};
-//float vy[N] = {
-//    0, 30, 31, 32, 33, 34, 35, 36, 37, 38,
-//    39, 40, 41, 42, 43, 43, 42, 41, 40, 39};
-//float vz[N] = {0};
-
-
-// top part we want
-//float vx[N] = {
-//    11.4, 11.3, 11.2, 11.1, 11, 10.5, 9.5, 8.2, 7, 6.2,
-//    6, 6.2, 6.8, 7.6, 8.5, 7, 6.1, 5.3, 4.7, 4.5};
-//float vy[N] = {
-//    29, 30, 31, 32, 33, 34, 35, 36, 37, 38,
-//    39, 40, 41, 42, 43, 43, 42, 41, 40, 39};
-//float vz[N] = {0};
-
-
-
-// cyclinder
-//float vx[N] = {0, 8, 8, 7.5, 6.7, 5, 5.5, 4, 4, 5, 5.6,
-//    6.1, 6.8, 7.1, 7.5, 8, 8.4, 8.7, 9, 9.3, 9.8,};
-//float vy[N] = {0, 0, 1, 2, 3, 4, 5, 6, 7, 8,
-//    9, 10, 11, 12, 13, 14, 15, 16, 17, 18};
-//float vz[N] = {0};
-
-// mmore bottom
-//float vx[N] = {0, 8, 8, 7.5, 6.7, 5, 5.5, 4, 4, 5,
-//    5.6, 6.1, 6.8, 7.1, 7.5, 8, 8.4, 8.7, 9, 9.3,
-//    9.8};
-//float vy[N] = {0, 0, 1, 2, 3, 4, 5, 6, 7, 8,
-//    9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
-//    19};
-//float vz[N] = {0};
-
-
-// shows bottom half
-//float vx[N] = {0, 8, 8, 7.5, 6.7, 5, 5.5, 4, 4, 5, 5.6,
-//    6.1, 6.8, 7.1, 7.5, 8, 8.4, 8.7, 9, 9.3, 9.8,
-//    10};
-//float vy[N] = {0, 0, 1, 2, 3, 4, 5, 6, 7, 8,
-//    9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
-//    19, 20};
-//float vz[N] = {0};
-
-// cut top even more now near mid
-//float vx[N] = {0, 8, 8, 7.5, 6.7, 5, 5.5, 4, 4, 5, 5.6,
-//    6.1, 6.8, 7.1, 7.5, 8, 8.4, 8.7, 9, 9.3, 9.8,
-//    10, 10.2, 10.4, 10.6};
-//float vy[N] = {0, 0, 1, 2, 3, 4, 5, 6, 7, 8,
-//    9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
-//    19, 20, 21, 22, 23};
-//float vz[N] = {0};
-
-// cut top more
-//float vx[N] = {0, 8, 8, 7.5, 6.7, 5, 5.5, 4, 4, 5, 5.6,
-//    6.1, 6.8, 7.1, 7.5, 8, 8.4, 8.7, 9, 9.3, 9.8,
-//    10, 10.2, 10.4, 10.6, 10.9, 11, 11.1, 11.2, 11.3};
-//float vy[N] = {0, 0, 1, 2, 3, 4, 5, 6, 7, 8,
-//    9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
-//    19, 20, 21, 22, 23, 24, 25, 26, 27, 28};
-//float vz[N] = {0};
-
-
-// cut very top
-//float vx[N] = {0, 8, 8, 7.5, 6.7, 5, 5.5, 4, 4, 5, 5.6,
-//    6.1, 6.8, 7.1, 7.5, 8, 8.4, 8.7, 9, 9.3, 9.8,
-//    10, 10.2, 10.4, 10.6, 10.9, 11, 11.1, 11.2, 11.3,
-//    11.4, 11.3, 11.2, 11.1, 11, 10.5, 9.5, 8.2, 7, 6.2,};
-//float vy[N] = {0, 0, 1, 2, 3, 4, 5, 6, 7, 8,
-//    9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
-//    19, 20, 21, 22, 23, 24, 25, 26, 27, 28,
-//    29, 30, 31, 32, 33, 34, 35, 36, 37, 38};
-//float vz[N] = {0};
-
-//
-//float vx[N] = {0, 8, 8, 7.5, 6.7, 5, 5.5, 4, 4, 5, 5.6,
-//    6.1, 6.8, 7.1, 7.5, 8, 8.4, 8.7, 9, 9.3, 9.8,
-//    10, 10.2, 10.4, 10.6, 10.9, 11, 11.1, 11.2, 11.3,
-//    11.4, 11.3, 11.2, 11.1, 11, 10.5, 9.5, 8.2, 7, 6.2,
-//    6, 6.2, 6.8, 7.6, 8.5, 7, 6.1, 5.3, 4.7, 4.5};
-//float vy[N] = {0, 0, 1, 2, 3, 4, 5, 6, 7, 8,
-//    9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
-//    19, 20, 21, 22, 23, 24, 25, 26, 27, 28,
-//    29, 30, 31, 32, 33, 34, 35, 36, 37, 38,
-//    39, 40, 41, 42, 43, 43, 42, 41, 40, 39};
-//float vz[N] = {0};
-//
-
-
 
 //--------------------------------------------------------------------------------
 void loadTexture()
@@ -443,34 +335,7 @@ void drawModel()
 
 }
 
-void myTimer(int value)
-{
-    // walk 13 steps on x axis
-    if (animation_time < 13) {
-        walk_x++;
-    }
-    // then turn forward
-    else if (animation_time == 13) {
-        walk_dir_angle = 0;
-    }
-    // walk few steps on z axis
-    else if (animation_time > 13 && animation_time < 20) {
-        walk_z++;
-    }
 
-
-    if(value == 0){
-        walk_theta-=40;
-        glutPostRedisplay();
-        glutTimerFunc(400, myTimer, 1);
-    }
-    else if(value == 1){
-        walk_theta+=40;
-        glutPostRedisplay();
-        glutTimerFunc(400, myTimer, 0);
-    }
-    animation_time++; // increment timer of animation
-}
 
 void updateNormalLookXYZ() {
     float dir_x = -sin(h_look_angle), dir_y = sin(v_look_angle),  dir_z = -cos(h_look_angle);
@@ -480,9 +345,71 @@ void updateNormalLookXYZ() {
     look_z = eye_z + d * dir_z;
 }
 
+
+//------- Ring ----------------------------------------------------
+// A single circular ring of specified radius
+void ring(float radius)
+{
+    float angle1,angle2, ca1,sa1, ca2,sa2;
+    float x1,z1, x2,z2, x3,z3, x4,z4;  //four points of a quad
+    float toRad = 3.14159265/180.0;  //Conversion from degrees to radians
+    float height = 0.2; // was 1
+    float width = 0.1; // was .5
+    glBegin(GL_QUADS);
+    for(int i = 0; i < 360; i += 5)    //5 deg intervals
+    {
+        angle1 = i * toRad;       //Computation of angles, cos, sin etc
+        angle2 = (i+5) * toRad;
+        ca1=cos(angle1); ca2=cos(angle2);
+        sa1=sin(angle1); sa2=sin(angle2);
+        x1=(radius-width)*sa1; z1=(radius-width)*ca1;
+        x2=(radius+width)*sa1; z2=(radius+width)*ca1;
+        x3=(radius+width)*sa2; z3=(radius+width)*ca2;
+        x4=(radius-width)*sa2; z4=(radius-width)*ca2;
+        
+        glNormal3f(0., height, 0.);       //Quad 1 facing up
+        glVertex3f(x1, height, z1);
+        glVertex3f(x2, height, z2);
+        glVertex3f(x3, height, z3);
+        glVertex3f(x4, height, z4);
+        
+        glNormal3f(-sa1, 0.0, -ca1);   //Quad 2 facing inward
+        glVertex3f(x1, 0.0, z1);
+        glVertex3f(x1, height, z1);
+        glNormal3f(-sa2 ,0.0, -ca2);
+        glVertex3f(x4, height, z4);
+        glVertex3f(x4, 0.0, z4);
+        
+        glNormal3f(sa1, 0.0, ca1);   //Quad 3 facing outward
+        glVertex3f(x2, height, z2);
+        glVertex3f(x2, 0.0, z2);
+        glNormal3f(sa2, 0.0, ca2);
+        glVertex3f(x3, 0.0, z3);
+        glVertex3f(x3, height, z3);
+    }
+    glEnd();
+}
+
+
 void drawSweepModel() {
+    
+    // draw circle that rotates around it
+    glColor4f(1.0, 1.0, 0.0, 1.0);
+    glPushMatrix();
+    glRotatef(ring_turning_angle, 0.0, 1.0, 0.0);
+    glTranslated(0, 4.3, 10); // move on track
+    glutSolidSphere(1, 10, 10);
+    glPopMatrix();
+    
+    // draw ring with radius 2
+    glPushMatrix();
+    glTranslated(0, 4.3, 0);
+    glColor4f(0.0, 0.0, 0.3, 1.0);
+    ring(10);
+    glPopMatrix();
+    
     float wx[N], wy[N], wz[N];
-    glColor4f (1.0, 0.75, 0.5, 1.0); // temp
+    glColor4f (0.5, 1.0, 1.0, 1.0); // cyanish colour
 
     double theta = (-1 * M_PI)/180;
     glBegin(GL_TRIANGLE_STRIP);
@@ -527,6 +454,38 @@ void drawSweepModel() {
     glEnd();
 }
 
+void myTimer(int value)
+{
+    // walk 13 steps on x axis
+    if (animation_time < 13) {
+        walk_x++;
+    }
+    // then turn forward
+    else if (animation_time == 13) {
+        walk_dir_angle = 0;
+    }
+    // walk few steps on z axis
+    else if (animation_time > 13 && animation_time < 20) {
+        walk_z++;
+    }
+    
+    
+    ring_turning_angle+=40;
+    animation_time++; // increment timer of animation
+    if(value == 0){
+        walk_theta-=40;
+        glutPostRedisplay();
+        glutTimerFunc(400, myTimer, 1);
+    }
+    else if(value == 1){
+        walk_theta+=40;
+        glutPostRedisplay();
+        glutTimerFunc(400, myTimer, 0);
+    }
+
+}
+
+
 //--Display: ---------------------------------------------------------------
 //--This is the main display module containing function calls for generating
 //--the scene.
@@ -546,6 +505,7 @@ void display()
   	glEnable(GL_LIGHTING);	       //Enable lighting when drawing the model
 
 
+    
     // draw robot
     glPushMatrix();
     glTranslatef(walk_x, 0, walk_z); // walk
@@ -556,9 +516,13 @@ void display()
 
     // draw sweep model
     glPushMatrix();
+    //glTranslated(-30, 0, 0);
     glScalef(0.4, 0.6, 0.4);
     drawSweepModel();
     glPopMatrix();
+    
+
+    
     drawFloor();
     skybox();
     glRotatef(dir_x, 0, 1, 0);
@@ -621,7 +585,7 @@ int main(int argc, char** argv)
     initialize();
     glutDisplayFunc(display);
     glutSpecialFunc(special);
-    glutTimerFunc(400, myTimer, 0);
+    glutTimerFunc(1000, myTimer, 0);
     glutSpecialFunc(special);
     glutMainLoop();
     return 0;
