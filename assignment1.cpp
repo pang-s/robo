@@ -34,15 +34,11 @@ int walk_dir_angle = 90;
 int animation_time = 0;
 float ring_turning_angle = 0;
 
-// vase
-const int N = 50;  // Total number of vertices on the base curve
 
 
-float vx[N] = {9.5, 8.2, 7, 6.2,
-    6, 6.2, 6.8, 7.6, 8.5, 8.7};
-float vy[N] = {0, 1, 2, 3,
-    4, 5, 6, 7, 8, 9};
-float vz[N] = {0};
+
+
+
 
 //--------------------------------------------------------------------------------
 void loadTexture()
@@ -354,7 +350,7 @@ void ring(float radius)
     float x1,z1, x2,z2, x3,z3, x4,z4;  //four points of a quad
     float toRad = 3.14159265/180.0;  //Conversion from degrees to radians
     float height = 0.2; // was 1
-    float width = 0.1; // was .5
+    float width = 0.05; // was .5
     glBegin(GL_QUADS);
     for(int i = 0; i < 360; i += 5)    //5 deg intervals
     {
@@ -390,23 +386,29 @@ void ring(float radius)
     glEnd();
 }
 
-
-void drawSweepModel() {
-    
+void ringAndCircle(float radius) {
     // draw circle that rotates around it
     glColor4f(1.0, 1.0, 0.0, 1.0);
     glPushMatrix();
     glRotatef(ring_turning_angle, 0.0, 1.0, 0.0);
-    glTranslated(0, 4.3, 10); // move on track
-    glutSolidSphere(1, 10, 10);
+    glTranslated(0, 0, radius); // move on track
+    glutSolidSphere(0.6, 10, 10);
     glPopMatrix();
     
     // draw ring with radius 2
     glPushMatrix();
-    glTranslated(0, 4.3, 0);
     glColor4f(0.0, 0.0, 0.3, 1.0);
-    ring(10);
+    ring(radius);
     glPopMatrix();
+}
+
+void drawSweepModel() {
+    const int N = 50;  // Total number of vertices on the base curve
+    
+
+    float vx_t[N] = {9.5, 8.2, 7, 6.2, 6, 6.2, 6.8, 7.6, 8.5, 8.7};
+    float vy_t[N] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+    float vz_t[N] = {0};
     
     float wx[N], wy[N], wz[N];
     glColor4f (0.5, 1.0, 1.0, 1.0); // cyanish colour
@@ -416,9 +418,9 @@ void drawSweepModel() {
     for(int s = 0; s < 360; s++){
         for(int i = 0; i < N; i++)
         {
-            wx[i] = vx[i] * cos(theta) + vz[i] * sin(theta);
-            wy[i] = vy[i];
-            wz[i] = -vx[i] * sin(theta) + vz[i] * cos(theta);
+            wx[i] = vx_t[i] * cos(theta) + vz_t[i] * sin(theta);
+            wy[i] = vy_t[i];
+            wz[i] = -vx_t[i] * sin(theta) + vz_t[i] * cos(theta);
         }
 
         for(int i = 0; i < N; i++)
@@ -427,14 +429,14 @@ void drawSweepModel() {
 
 
             if(i > 0) normal(wx[i-1], wy[i-1], wz[i-1],
-                             vx[i-1], vy[i-1], vz[i-1],
-                             vx[i], vy[i], vz[i] );
+                             vx_t[i-1], vy_t[i-1], vz_t[i-1],
+                             vx_t[i], vy_t[i], vz_t[i] );
             //glTexCoord2d(float(s)/360.0, float(i)/N);
-            glVertex3f(vx[i], vy[i], vz[i]);
+            glVertex3f(vx_t[i], vy_t[i], vz_t[i]);
 
 
             if(i > 0) normal( wx[i-1], wy[i-1], wz[i-1],
-                             vx[i], vy[i], vz[i],
+                             vx_t[i], vy_t[i], vz_t[i],
                              wx[i], wy[i], wz[i] );
 
            // glTexCoord2f(float(s+1)/360.0, float(i)/N);
@@ -445,17 +447,127 @@ void drawSweepModel() {
         }
 
         for (int j = 0; j < N; j++){
-            vx[j] = wx[j];
-            vy[j] = wy[j];
-            vz[j] = wz[j];
+            vx_t[j] = wx[j];
+            vy_t[j] = wy[j];
+            vz_t[j] = wz[j];
         }
 
     }
     glEnd();
 }
 
-void myTimer(int value)
-{
+
+
+
+void drawHoneycomb() {
+    
+    
+    const int N = 9;		//Number of vertices of the base polygon
+    float vz[N] = {2, 1, 0, -1, -2, -1, 1, 2};
+    float vx[N] = {0, 1, 1, 1, 0, -1, -1, 0};
+    float vy[N] = {0};
+    
+    
+//    float vx[N] = {0., 8., 11., 11., 10.4, 9.5, 8., 6., 3., 0., -3., -6., -8., -9.5, -10.4, -11., -11., -8};
+//    float vy[N] = {0};
+//    float vz[N] = {19.4, 8., 5., 0., -4., -8., -11., -12., -12.4, -12.5, -12.4, -12., -11., -8., -4., 0., 5., 8};
+    float wx[N], wy[N], wz[N];
+//    float s[N + 1] = {0.0, 0.15, 0.2, 0.25, 0.30, 0.35, 0.4, 0.43, 0.46, 0.5, 0.53, 0.56, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 1};
+    
+//    	glNormal3f(0.0, 1.0, 0.0);
+//    	glBegin(GL_LINE_LOOP);
+//    		for(int i = 0; i < N; i++)
+//    		     glVertex3f(vx[i], vy[i], vz[i]);
+//    	glEnd();
+
+
+    double theta = (-10 * M_PI)/180;
+    float height = 5;
+    glNormal3f(0.0, 1.0, 0.0);
+    //glEnable(GL_TEXTURE_2D);
+    // this loop does 9 height
+    for(int j = 0; j < 1; j++){
+        
+        for(int i = 0; i < N; i++)
+        {
+            //printf("%d %g, %g, %g\n", i, vx[i], vy[i], vz[i]);
+            wx[i] = vx[i] * cos(theta) + vz[i] * sin(theta);
+            wy[i] = vy[i] + height; // was 20
+            wz[i] = -vx[i] * sin(theta) + vz[i] * cos(theta);
+            //printf("w is %g, %g, %g\n", wx[i], wy[i], wz[i]);
+            
+            if(i > 0) normal( vx[i-1], vy[i-1], vz[i-1],
+                             vx[i], vy[i], vz[i],
+                             wx[i], wy[i], wz[i] );
+            
+        }
+        glBegin(GL_QUAD_STRIP);
+        for(int i = 0; i < N; i++)
+        {
+            
+            //glTexCoord2f(s[i], 0);
+            glVertex3f(vx[i], vy[i], vz[i]);
+            //glTexCoord2f(s[i], 1);
+            glVertex3f(wx[i], wy[i], wz[i]);
+            
+            
+        }
+        
+        //draw this when do extrra texture
+        //glTexCoord2f(s[N], 0);
+        //glVertex3f(vx[0], vy[0], vz[0]);
+        //glTexCoord2f(s[N], 1);
+        //glVertex3f(wx[0], wy[0], wz[0]);
+        
+        for(int i = 0; i < N; i++)
+        {
+            vx[i] = wx[i];
+            vy[i] = wy[i];
+            vz[i] = wz[i];
+        }
+        
+        
+        glEnd();
+    }
+    
+}
+
+void drawDodecPlatform() {
+    // draw turning dodecahedron
+    glPushMatrix();
+    glColor4f (1, 1, 1, 1.0); // white colour
+    glTranslatef(0, 10, 0);
+    glRotatef(ring_turning_angle, 0, 1, 0);
+    glScalef(1.2, 1.2, 1.2);
+    glutSolidDodecahedron();
+    glPopMatrix();
+    // draw honeycomb extruded object
+    glPushMatrix();
+    glColor4f (1, 0, 0, 1.0); // red colour
+    glScalef(1.2, 1.2, 1.2);
+    drawHoneycomb();
+    glPopMatrix();
+}
+
+void drawItem() {
+    
+    drawDodecPlatform();
+    
+    // draw sweep model
+    glPushMatrix();
+    glScalef(0.4, 0.6, 0.4);
+    drawSweepModel();
+    glPopMatrix();
+    
+    glPushMatrix();
+    glTranslatef(0, 2.6, 0);
+    ringAndCircle(3.5);
+    glPopMatrix();
+    
+}
+
+
+void myTimer(int value) {
     // walk 13 steps on x axis
     if (animation_time < 13) {
         walk_x++;
@@ -469,8 +581,7 @@ void myTimer(int value)
         walk_z++;
     }
     
-    
-    ring_turning_angle+=40;
+    ring_turning_angle+=50;
     animation_time++; // increment timer of animation
     if(value == 0){
         walk_theta-=40;
@@ -505,6 +616,7 @@ void display()
   	glEnable(GL_LIGHTING);	       //Enable lighting when drawing the model
 
 
+
     
     // draw robot
     glPushMatrix();
@@ -513,16 +625,12 @@ void display()
     glScalef(0.7, 0.7, 0.7);
     drawModel();
     glPopMatrix();
-
-    // draw sweep model
+    
     glPushMatrix();
-    //glTranslated(-30, 0, 0);
-    glScalef(0.4, 0.6, 0.4);
-    drawSweepModel();
+    glTranslatef(20, 0, 0);
+    drawItem();
     glPopMatrix();
-    
 
-    
     drawFloor();
     skybox();
     glRotatef(dir_x, 0, 1, 0);
