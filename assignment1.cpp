@@ -341,6 +341,85 @@ void updateNormalLookXYZ() {
     look_z = eye_z + d * dir_z;
 }
 
+void drawCylinder(double radiusX, double heightY, double radiusZ, int nsegments, float height)
+{
+    glBegin(GL_QUADS);
+    double pi = 3.141592654;
+    double arc=0.0;
+    for (int i=0; i<(nsegments-1); i++)
+    {
+        double theta_i =  (double)(i) / (double) nsegments;
+        double theta_ii = (double)(i+1)/(double)nsegments;
+        double xi = radiusX*cos(pi*theta_i);
+        double zi = radiusZ*sin(pi*theta_i);
+        
+        double xii= radiusX*cos(pi*theta_ii);
+        double zii = radiusZ*sin(pi*theta_ii);
+        
+        glTexCoord2d(theta_i,1);
+        glVertex3d( xi, height, zi  );
+        
+        glTexCoord2d(theta_i ,0);
+        glVertex3d( xi, -height, zi );
+        
+        glTexCoord2d(theta_ii ,0);
+        glVertex3d( xii, -height, zii );
+        
+        glTexCoord2d(theta_ii ,1);
+        glVertex3d( xii, height, zii );
+    }
+    glEnd();
+}
+
+void drawSwirls(float radius) {
+    
+    int poly_height = 0;
+    float angle1,angle2, ca1,sa1, ca2,sa2;
+    float x1,z1, x2,z2, x3,z3, x4,z4;  //four points of a quad
+    float toRad = 3.14159265/180.0;  //Conversion from degrees to radians
+    float height = 0.1; // was 1
+    float width = 0.05; // was .5
+    glBegin(GL_QUADS);
+    
+    for(int j = 0; j < 3; j++ ) {
+        for(int i = 0; i < 360; i += 5)    //5 deg intervals
+        {
+            angle1 = i * toRad;       //Computation of angles, cos, sin etc
+            angle2 = (i+5) * toRad;
+            ca1=cos(angle1); ca2=cos(angle2);
+            sa1=sin(angle1); sa2=sin(angle2);
+            x1=(radius-width)*sa1; z1=(radius-width)*ca1;
+            //        x2=(radius+width)*sa1; z2=(radius+width)*ca1;
+            //        x3=(radius+width)*sa2; z3=(radius+width)*ca2;
+            x4=(radius-width)*sa2; z4=(radius-width)*ca2;
+            //
+            //        glNormal3f(0., height, 0.);       //Quad 1 facing up
+            //        glVertex3f(x1, height, z1);
+            //        glVertex3f(x2, height, z2);
+            //        glVertex3f(x3, height, z3);
+            //        glVertex3f(x4, height, z4);
+            //
+            glNormal3f(-sa1 +poly_height, 0.0 +poly_height, -ca1+poly_height);   //Quad 2 facing inward
+            glVertex3f(x1+poly_height, 0+poly_height, z1+poly_height);
+            glVertex3f(x1+poly_height, height+poly_height, z1+poly_height);
+            glNormal3f(-sa2 +poly_height ,0.0 +poly_height, -ca2 +poly_height);
+            glVertex3f(x4+poly_height, height+poly_height, z4 + poly_height);
+            glVertex3f(x4 + poly_height, 0 +poly_height, z4 + poly_height);
+            
+            //        glNormal3f(sa1, 0.0, ca1);   //Quad 3 facing outward
+            //        glVertex3f(x2, height, z2);
+            //        glVertex3f(x2, 0.0, z2);
+            //        glNormal3f(sa2, 0.0, ca2);
+            //        glVertex3f(x3, 0.0, z3);
+            //        glVertex3f(x3, height, z3);
+        }
+        radius += 2;
+        poly_height += 2;
+    }
+    
+    glEnd();
+
+}
 
 //------- Ring ----------------------------------------------------
 // A single circular ring of specified radius
@@ -636,6 +715,10 @@ void display()
   	glLightfv(GL_LIGHT0, GL_POSITION, lpos);   //Set light position
   	glEnable(GL_LIGHTING);	       //Enable lighting when drawing the model
 
+    glPushMatrix();
+    //glScalef(0.02, 0.02, 0.02);
+    drawSwirls(3.5);
+    glPopMatrix();
     
     // draw rainbow
     drawRainbow();
