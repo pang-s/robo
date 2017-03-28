@@ -467,10 +467,6 @@ void drawHoneycomb() {
     float vx[N] = {0, 1, 1, 1, 0, -1, -1, 0};
     float vy[N] = {0};
     
-    
-//    float vx[N] = {0., 8., 11., 11., 10.4, 9.5, 8., 6., 3., 0., -3., -6., -8., -9.5, -10.4, -11., -11., -8};
-//    float vy[N] = {0};
-//    float vz[N] = {19.4, 8., 5., 0., -4., -8., -11., -12., -12.4, -12.5, -12.4, -12., -11., -8., -4., 0., 5., 8};
     float wx[N], wy[N], wz[N];
 //    float s[N + 1] = {0.0, 0.15, 0.2, 0.25, 0.30, 0.35, 0.4, 0.43, 0.46, 0.5, 0.53, 0.56, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 1};
     
@@ -566,6 +562,31 @@ void drawItem() {
     
 }
 
+void drawParabola() {
+    
+    const int P = 41;
+    float y1[P] = {-20.0, -18.05, -16.2, -14.45, -12.8, -11.25, -9.8, -8.45, -7.2, -6.05, -5.0, -4.05, -3.2, -2.45, -1.8, -1.25, -0.8, -0.45, -0.2, -0.05, -0.0, -0.05, -0.2, -0.45, -0.8, -1.25, -1.8, -2.45, -3.2, -4.05, -5.0, -6.05, -7.2, -8.45, -9.8, -11.25, -12.8, -14.45, -16.2, -18.05, -20.0};
+    float x1[P] = {-20, -19, -18, -17, -16, -15, -14, -13, -12, -11, -10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
+    
+    float width = 2;
+    float move_up = 20; // set this to min/max y value positive so that rainbow can be shown on floor
+    glBegin(GL_QUAD_STRIP);
+    for(int i = 0; i < P; i++) {
+        glVertex3f(x1[i], y1[i] + width + move_up, 0);
+        glVertex3f(x1[i] + width, y1[i] + width + move_up, 0);
+    }
+    glEnd();
+    
+}
+
+void drawRainbow() {
+    glPushMatrix();
+    glColor4f (0, 1, 0.2, 1.0);
+    glTranslatef(0, 0, -20);
+    //glScalef(0.5, 0.5, 0.5);
+    drawParabola();
+    glPopMatrix();
+}
 
 void myTimer(int value) {
     // walk 13 steps on x axis
@@ -615,8 +636,9 @@ void display()
   	glLightfv(GL_LIGHT0, GL_POSITION, lpos);   //Set light position
   	glEnable(GL_LIGHTING);	       //Enable lighting when drawing the model
 
-
-
+    
+    // draw rainbow
+    drawRainbow();
     
     // draw robot
     glPushMatrix();
@@ -641,7 +663,7 @@ void display()
 void special(int key, int x, int y)
 {
     float dir_x = -sin(h_look_angle), dir_y = 0,  dir_z = -cos(h_look_angle);
-    float s = 0.1;
+    float s = 0.6; // was 0.1
     if(key == GLUT_KEY_LEFT) {
         h_look_angle += 0.1;   //in radians
     }
