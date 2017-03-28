@@ -34,6 +34,13 @@ int walk_dir_angle = 90;
 int animation_time = 0;
 float ring_turning_angle = 0;
 
+// for flying bot
+float bot_move_x = 0;
+float bot_move_y = 0;
+float bot_move_z = 0;
+float bot_turn_x = 0;
+float bot_turn_y = 0;
+float bot_turn_z = 0;
 
 
 
@@ -174,13 +181,201 @@ void normal(float x1, float y1, float z1,
 //--------------------------------------------------------------------------------
 
 //--Draws a character model constructed using GLUT objects ------------------
+
+void drawCylinder(float radius, float height)
+{
+    float angle1,angle2, ca1,sa1, ca2,sa2;
+    float x1, z1, x4,z4;  //four points of a quad
+    float toRad = 3.14159265/180.0;  //Conversion from degrees to radians
+  
+    float width = 0.05; // was .5
+    glBegin(GL_QUADS);
+    for(int i = 0; i < 360; i += 5)    //5 deg intervals
+    {
+        angle1 = i * toRad;       //Computation of angles, cos, sin etc
+        angle2 = (i+5) * toRad;
+        ca1=cos(angle1); ca2=cos(angle2);
+        sa1=sin(angle1); sa2=sin(angle2);
+        x1=(radius-width)*sa1; z1=(radius-width)*ca1;
+        x4=(radius-width)*sa2; z4=(radius-width)*ca2;
+        
+        glNormal3f(-sa1, 0.0, -ca1);   //Quad 2 facing inward
+        glVertex3f(x1, 0.0, z1);
+        glVertex3f(x1, height, z1);
+        glNormal3f(-sa2 ,0.0, -ca2);
+        glVertex3f(x4, height, z4);
+        glVertex3f(x4, 0.0, z4);
+      
+    }
+    glEnd();
+}
+
+
+void attachBoosters() {
+    glPushMatrix();          // right BOOSTERS
+    glColor3f(1, 0.4, 0);
+    glTranslatef(-0.8, -2.2, 0);
+    drawCylinder(0.6, 2);
+    glPopMatrix();
+    
+    glPushMatrix();          // left BOOSTERS
+    glColor3f(1, 0.4, 0);
+    glTranslatef(0.8, -2.2, 0);
+    drawCylinder(0.6, 2);
+    glPopMatrix();
+    
+}
+
+
+void drawModelNotWalking()
+{
+    
+    
+    glColor3f(.85, 0.72, 0.63);		//Head
+    glPushMatrix();
+    glTranslatef(0, 8.5, 0);
+    glScalef(2.8, 1.7, 1.5);
+    glutSolidCube(2);
+    glPopMatrix();
+    
+    glColor3f(0, 1, 0);		//Left eye
+    glPushMatrix();
+    glTranslatef(0.9, 8.7, 1.3);
+    glutSolidSphere(0.35, 10, 10);
+    glPopMatrix();
+    
+    glColor3f(0, 1, 0);		//Right eye
+    glPushMatrix();
+    glTranslatef(-0.9, 8.7, 1.3);
+    glutSolidSphere(0.35, 10, 10);
+    glPopMatrix();
+    
+    glColor3f(0, 0, 0);		//Mouth
+    glPushMatrix();
+    glTranslatef(0.0, 7.6, 1.51);
+    glBegin(GL_TRIANGLES); //Begin triangle coordinates
+    glVertex3f(-0.4f, 0.0f, 0.0f);
+    glVertex3f(0.0f, 0.5f, 0.0f);
+    glVertex3f(0.4f, 0.0f, 0.0f);
+    glEnd(); //End triangle coordinates
+    glPopMatrix();
+    
+    glColor3f(.85, 0.72, 0.63);				//Torso
+    //glColor3f(1, 1, 1);
+    glPushMatrix();
+    glTranslatef(0, 5.2, 0);
+    glScalef(3, 4, 1.8);
+    glutSolidCube(1);
+    glPopMatrix();
+    
+    glColor3f(.85, 0.72, 0.63);				//Torso Skirt Front
+    glPushMatrix();
+    glTranslatef(0, 2.8, 1.2);
+    glRotatef(-35, 1, 0, 0);
+    glScalef(3, 1.3, 0.1);
+    glutSolidCube(1);
+    glPopMatrix();
+    
+    glColor3f(.85, 0.72, 0.63);				//Torso Skirt Back
+    glPushMatrix();
+    glTranslatef(0, 2.8, -1.2);
+    glRotatef(35, 1, 0, 0);
+    glScalef(3, 1.3, 0.1);
+    glutSolidCube(1);
+    glPopMatrix();
+    
+    glColor3f(.85, 0.72, 0.63);				//Torso Skirt Right
+    glPushMatrix();
+    glTranslatef(1.6, 2.7, 0);
+    glRotatef(15, 0, 0, 1);
+    glScalef(0.1, 1.3, 1.8);
+    glutSolidCube(1);
+    glPopMatrix();
+    
+    glColor3f(.85, 0.72, 0.63);				//Torso Skirt Left
+    glPushMatrix();
+    glTranslatef(-1.6, 2.7, 0);
+    glRotatef(-15, 0, 0, 1);
+    glScalef(0.1, 1.3, 1.8);
+    glutSolidCube(1);
+    glPopMatrix();
+    
+    glColor3f(.85, 0.72, 0.63);				//Right leg circle
+    glPushMatrix();
+    glTranslatef(-0.8, 3, 0);
+    glutSolidSphere(.5, 10, 10);
+    glPopMatrix();
+    
+    glColor3f(.85, 0.72, 0.63);	      // right leg
+    glPushMatrix();
+    glTranslatef(-0.8, 1.3, 0);
+    glScalef(1, 2.8, 1.4);
+    glutSolidCube(1);
+    glPopMatrix();
+    
+    glColor3f(.85, 0.72, 0.63);				//Left leg circle
+    glPushMatrix();
+    glTranslatef(0.8, 3, 0);
+    glutSolidSphere(.5, 10, 10);
+    glPopMatrix();
+    
+    glPushMatrix();
+    glTranslatef(0.8, 1.3, 0);  // left leg
+    glScalef(1, 2.8, 1.4);
+    glutSolidCube(1);
+    glPopMatrix();
+    
+    //Right arm circle shoulder
+    glPushMatrix();
+    glTranslatef(-2, 6.5, 0);
+    glutSolidSphere(0.4, 10, 10);
+    glPopMatrix();
+    
+    //Right arm block shoulder
+    glPushMatrix();
+    glTranslatef(-1.5, 6.6, 0);
+    glScalef(0.8, 0.8, 1);
+    glutSolidCube(1);
+    glPopMatrix();
+    
+    // right arm
+    glPushMatrix();
+    glTranslatef(-2, 4.4, 0);
+    glScalef(.8, 3.5, 0.8);
+    glutSolidCube(1);
+    glPopMatrix();
+    
+    //Left arm circle shoulder
+    glPushMatrix();
+    glTranslatef(2, 6.5, 0);
+    glutSolidSphere(0.4, 10, 10);
+    glPopMatrix();
+    
+    //Left arm block shoulder
+    glPushMatrix();
+    glTranslatef(1.5, 6.6, 0);
+    glScalef(0.8, 0.8, 1);
+    glutSolidCube(1);
+    glPopMatrix();
+    
+    // left arm
+    glPushMatrix();
+    glTranslatef(2, 4.4, 0);
+    glScalef(.8, 3.5, 1);
+    glutSolidCube(1);
+    glPopMatrix();
+    
+    
+    
+}
+
 void drawModel()
 {
-  	glColor3f(.85, 0.72, 0.63);		//Head
-  	glPushMatrix();
-  	  glTranslatef(0, 8.5, 0);
-      glScalef(2.8, 1.7, 1.5);
-  	  glutSolidCube(2);
+    glColor3f(.85, 0.72, 0.63);		//Head
+    glPushMatrix();
+    glTranslatef(0, 8.5, 0);
+    glScalef(2.8, 1.7, 1.5);
+    glutSolidCube(2);
   	glPopMatrix();
 
     glColor3f(0, 1, 0);		//Left eye
@@ -341,35 +536,7 @@ void updateNormalLookXYZ() {
     look_z = eye_z + d * dir_z;
 }
 
-void drawCylinder(double radiusX, double heightY, double radiusZ, int nsegments, float height)
-{
-    glBegin(GL_QUADS);
-    double pi = 3.141592654;
-    double arc=0.0;
-    for (int i=0; i<(nsegments-1); i++)
-    {
-        double theta_i =  (double)(i) / (double) nsegments;
-        double theta_ii = (double)(i+1)/(double)nsegments;
-        double xi = radiusX*cos(pi*theta_i);
-        double zi = radiusZ*sin(pi*theta_i);
-        
-        double xii= radiusX*cos(pi*theta_ii);
-        double zii = radiusZ*sin(pi*theta_ii);
-        
-        glTexCoord2d(theta_i,1);
-        glVertex3d( xi, height, zi  );
-        
-        glTexCoord2d(theta_i ,0);
-        glVertex3d( xi, -height, zi );
-        
-        glTexCoord2d(theta_ii ,0);
-        glVertex3d( xii, -height, zii );
-        
-        glTexCoord2d(theta_ii ,1);
-        glVertex3d( xii, height, zii );
-    }
-    glEnd();
-}
+
 
 void drawSwirls(float radius) {
     
@@ -668,7 +835,7 @@ void drawRainbow() {
 }
 
 void myTimer(int value) {
-    // walk 13 steps on x axis
+    // walking bot
     if (animation_time < 13) {
         walk_x++;
     }
@@ -677,10 +844,81 @@ void myTimer(int value) {
         walk_dir_angle = 0;
     }
     // walk few steps on z axis
-    else if (animation_time > 13 && animation_time < 20) {
+    else if (animation_time < 20) {
         walk_z++;
     }
     
+    // fly robot
+    // walk 13 steps on x axis
+    if (animation_time < 13) {
+        bot_move_y++; //lift off
+    }
+    // then turn forward
+    else if (animation_time == 13) {
+        bot_turn_y -= 36; // turn to arc
+    }
+    else if (animation_time < 18) {
+        bot_turn_y -= 36; // turn to arc more
+    }
+    else if (animation_time < 20) {
+        bot_turn_x -= 40; // move body down under arc
+    }
+    else if (animation_time < 25) {
+        bot_move_z -= 2; // move towards arc
+    }
+    else if (animation_time < 30) {
+        bot_move_z -= 2; // move towards arc
+        bot_turn_y += 35;
+    }
+    else if (animation_time < 34) {
+        bot_move_z -= 2; // move towards arc
+        bot_move_y++;
+    }
+    else if (animation_time < 44) {
+        bot_turn_x += 10; // fly up to arch back wards
+        bot_move_y++;
+    }
+    else if (animation_time < 46) {
+        bot_turn_x += 5; // fly up to arch back wards
+        bot_move_y+= 0.5;
+    }
+    else if (animation_time < 52) {
+        bot_turn_x += 10; // fly up to arch back wards
+        bot_move_y+= 0.5;
+    }
+    else if (animation_time < 54) {
+        bot_move_z +=3;
+        bot_turn_x += 5;
+    }
+    else if (animation_time < 58) {
+        bot_turn_x += 10;
+        bot_move_z ++;
+        bot_move_y--;
+    }
+    else if (animation_time < 64) {
+        bot_turn_x += 15;
+        bot_move_z +=.5;
+        bot_move_y--;
+    }
+    else if (animation_time < 68) {
+        bot_turn_x += 15;
+        bot_move_z -=.5;
+        bot_move_y -= 1.3;
+    }
+    else if (animation_time < 74) {
+        bot_move_z -= 1.5;
+        bot_turn_x += 12;
+        bot_move_y++;
+    }
+    else if (animation_time < 77) {
+        bot_move_y++;
+    }
+    else if (animation_time < 126) {
+        bot_move_y-=0.5;
+    }
+    
+ 
+    // for the item
     ring_turning_angle+=50;
     animation_time++; // increment timer of animation
     if(value == 0){
@@ -715,11 +953,16 @@ void display()
   	glLightfv(GL_LIGHT0, GL_POSITION, lpos);   //Set light position
   	glEnable(GL_LIGHTING);	       //Enable lighting when drawing the model
 
+
+    // draw robot not walking
     glPushMatrix();
-    //glScalef(0.02, 0.02, 0.02);
-    drawSwirls(3.5);
+    glTranslatef(bot_move_x, bot_move_y, bot_move_z);
+    glRotatef(bot_turn_x, 1, 0, 0);
+    glRotatef(bot_turn_y, 0, 1, 0);
+    glRotatef(bot_turn_z, 0, 0, 1);
+    attachBoosters();
+    drawModelNotWalking();
     glPopMatrix();
-    
     // draw rainbow
     drawRainbow();
     
@@ -746,7 +989,7 @@ void display()
 void special(int key, int x, int y)
 {
     float dir_x = -sin(h_look_angle), dir_y = 0,  dir_z = -cos(h_look_angle);
-    float s = 0.6; // was 0.1
+    float s = 1; // was 0.1
     if(key == GLUT_KEY_LEFT) {
         h_look_angle += 0.1;   //in radians
     }
