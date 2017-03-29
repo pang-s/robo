@@ -712,6 +712,8 @@ void ring(float radius)
     glEnd();
 }
 
+
+
 void ringAndCircle(float radius) {
     // draw circle that rotates around it
     glColor4f(1.0, 1.0, 0.0, 1.0);
@@ -925,7 +927,7 @@ void stick() {
     glPushMatrix();
     glTranslatef(5, 30, 0);
     glRotatef(90, 1, 0, 0);
-    gluCylinder(q, 1.0, 1.0, 80.0, 20, 5);
+    gluCylinder(q, 1.0, 1.0, 20.0, 20, 5);
     glPopMatrix();
 }
 //-- Locomotive ------------------------------------------------
@@ -1060,14 +1062,51 @@ void drawRainbow() {
     glTranslatef(0, 0, -20);
     glRotatef(90, 0, 1, 0);
     glRotatef(90, 0, 0, 1);
+    halfRing(26);
+    halfRing(25);
+    halfRing(24);
+    halfRing(23);
+    halfRing(22);
     halfRing(21);
     halfRing(20);
-    halfRing(19);
-    halfRing(18);
-    halfRing(17);
-    halfRing(16);
-    halfRing(15);
     glPopMatrix();
+    
+}
+
+void drawTV() {
+    glPushMatrix();
+    glTranslatef(0, 4, 0);
+    glScalef(4, 3, 1);
+    glutSolidCube(3);
+    glPopMatrix();
+    
+    // screen
+    glPushMatrix();
+    glColor3f(0.0, 1.0, 0.0);
+    glTranslatef(0, 0, 1.6);
+    glBegin(GL_POLYGON);
+    glVertex3f(-5, 1, 0.0);
+    glVertex3f(5, 1, 0.0);
+    glVertex3f(5, 7.4, 0.0);
+    glVertex3f(-5, 7.4, 0.0);
+    glEnd();
+    glPopMatrix();
+    
+    //sticks
+    glPushMatrix();
+    glTranslatef(5, 0, 0);
+    glRotatef(45, 0, 0, 1);
+    glScalef(0.1, 0.5, 0.1);
+    stick();
+    glPopMatrix();
+    
+    glPushMatrix();
+    glTranslatef(-6, 0.7, 0);
+    glRotatef(-45, 0, 0, 1);
+    glScalef(0.1, 0.5, 0.1);
+    stick();
+    glPopMatrix();
+    
     
 }
 
@@ -1261,7 +1300,11 @@ void display()
 //    glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, lgt1_dir); //light1 direction
 //    glPopMatrix();
     
-
+    // draw tv
+    glPushMatrix();
+    glTranslatef(15, 0, -30);
+    drawTV();
+    glPopMatrix();
     // draw rover moving
     glPushMatrix();
     glTranslatef(rover_move_x - 25, rover_move_y, rover_move_z - 10);
