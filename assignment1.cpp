@@ -13,6 +13,8 @@
 using namespace std;
 
 //--Globals ---------------------------------------------------------------
+GLUquadric *q;    //Required for creating cylindrical objects
+
 float  eye_x = 0,  eye_y = 8,  eye_z = 32;    //Initial camera position
 float look_x = 1, look_y = 10, look_z = 1;    //"Look-at" point along -z direction
 
@@ -789,8 +791,132 @@ void drawDodecPlatform() {
     glScalef(1.2, 1.2, 1.2);
     drawHoneycomb();
     glPopMatrix();
+    // draw flattened cube for top part
+    glPushMatrix();
+    glTranslatef(0, 6, 0);
+    glScalef(1.9, 0.1, 1.9);
+    glutSolidCube(3);
+    glPopMatrix();
 }
 
+
+//------- Base of engine, wagons (including wheels) --------------------
+void base()
+{
+    glColor4f(0.2, 0.2, 0.2, 1.0);   //The base is nothing but a scaled cube!
+    glPushMatrix();
+    
+    glTranslatef(0.0, 4.0, 0.0);
+    glScalef(20.0, 2.0, 10.0);     //Size 20x10 units, thickness 2 units.
+    glutSolidCube(1.0);
+    glPopMatrix();
+    
+    glPushMatrix();					//Connector between wagons
+    
+    glTranslatef(11.0, 4.0, 0.0);
+    glutSolidCube(2.0);
+    glPopMatrix();
+    
+    //Wheels
+    glColor4f(0.5, 0., 0., 1.0);
+    glPushMatrix();
+    
+    glTranslatef(-8.0, 2.0, 5.1);
+    gluDisk(q, 0.0, 2.0, 20, 2);
+    glPopMatrix();
+    glPushMatrix();
+    
+    glTranslatef(8.0, 2.0, 5.1);
+    gluDisk(q, 0.0, 2.0, 20, 2);
+    glPopMatrix();
+    glPushMatrix();
+    
+    glTranslatef(-8.0, 2.0, -5.1);
+    glRotatef(180.0, 0., 1., 0.);
+    gluDisk(q, 0.0, 2.0, 20, 2);
+    glPopMatrix();
+    glPushMatrix();
+    
+    glTranslatef(8.0, 2.0, -5.1);
+    glRotatef(180.0, 0., 1., 0.);
+    gluDisk(q, 0.0, 2.0, 20, 2);
+    glPopMatrix();
+}
+
+void stick() {
+    glPushMatrix();
+    glTranslatef(5, 30, 0);
+    glRotatef(90, 1, 0, 0);
+    gluCylinder(q, 1.0, 1.0, 80.0, 20, 5);
+    glPopMatrix();
+}
+//-- Locomotive ------------------------------------------------
+void engine()
+{
+    
+    
+    base();
+    
+    
+    //Cab
+    glColor4f(0.8, 0.8, 0.0, 1.0);
+    glPushMatrix();
+    glTranslatef(7.0, 8.5, 0.0);
+    glScalef(6.0, 7.0, 10.0);
+    glutSolidCube(1.0);
+    glPopMatrix();
+    
+    glPushMatrix();
+    glTranslatef(6.0, 14.0, 0.0);
+    glScalef(4.0, 4.0, 8.0);
+    glutSolidCube(1.0);
+    glPopMatrix();
+    
+    //Boiler
+    glPushMatrix();
+    glColor4f(0.5, 0., 0., 1.0);
+    glTranslatef(4.0, 10.0, 0.0);
+    glRotatef(-90.0, 0., 1., 0.);
+    gluCylinder(q, 5.0, 5.0, 14.0, 20, 5);
+    glTranslatef(0.0, 0.0, 14.0);
+    gluDisk(q, 0.0, 5.0, 20, 3);
+    glColor4f(1.0, 1.0, 0.0, 1.0);
+    glTranslatef(0.0, 4.0, 0.2);
+    gluDisk(q, 0.0, 1.0, 20,2);  //headlight!
+    glPopMatrix();
+    
+}
+
+//--- A rail wagon ---------------------------------------------------
+void wagon()
+{
+    base();
+    
+    // the stick
+    glPushMatrix();
+    glTranslatef(11, 35, 0);
+    glRotatef(90, 1, 0, 0);
+    gluCylinder(q, 1.0, 1.0, 30.0, 20, 5);
+    glPopMatrix();
+    
+    // the cone
+    glPushMatrix();
+    
+    glTranslatef(18, 35, 0);
+    glRotatef(-90, 0, 1, 0);
+    gluCylinder(q, 10, 0, 10, 20, 8);
+    glPopMatrix();
+
+    
+    glColor4f(0.0, 1.0, 1.0, 1.0);
+    glPushMatrix();
+    
+    glTranslatef(0.0, 10.0, 0.0);
+    glScalef(18.0, 5.0, 10.0);
+    glutSolidCube(1.0);
+    glPopMatrix();
+    
+}
 void drawItem() {
     
     drawDodecPlatform();
@@ -806,6 +932,14 @@ void drawItem() {
     ringAndCircle(3.5);
     glPopMatrix();
     
+}
+
+void drawRover() {
+    
+    glPushMatrix();
+    glScalef(0.2, 0.2, 0.2);
+    wagon();
+    glPopMatrix();
 }
 
 void drawParabola() {
@@ -953,7 +1087,8 @@ void display()
   	glLightfv(GL_LIGHT0, GL_POSITION, lpos);   //Set light position
   	glEnable(GL_LIGHTING);	       //Enable lighting when drawing the model
 
-
+    drawRover();
+    
     // draw robot not walking
     glPushMatrix();
     glTranslatef(bot_move_x, bot_move_y, bot_move_z);
@@ -1015,6 +1150,8 @@ void special(int key, int x, int y)
 //------- Initialize OpenGL parameters -----------------------------------
 void initialize()
 {
+    q = gluNewQuadric();
+    
     loadTexture();
     glEnable(GL_TEXTURE_2D);
   	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);	//Background colour
