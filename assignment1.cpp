@@ -44,7 +44,13 @@ float bot_turn_x = 0;
 float bot_turn_y = 0;
 float bot_turn_z = 0;
 
-
+// for moving rover
+float rover_move_x = 0;
+float rover_move_y = 0;
+float rover_move_z = 0;
+float rover_turn_x = 0;
+float rover_turn_y = 0;
+float rover_turn_z = 0;
 
 
 
@@ -144,14 +150,42 @@ void skybox() {
 
 void drawFloor()
 {
+//    
+//    glPushMatrix();
+//    glNormal3f(0.0, 1.0, 0.0);
+//    float white[4] = {1.0, 1.0, 1.0, 1.0};
+//    float black[4] = {0.0, 0.0, 0.0, 1.0};
+//    glBindTexture(GL_TEXTURE_2D, txId[5]);
+//    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+//    glMaterialfv(GL_FRONT, GL_SPECULAR, black);
+//    glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, white);
+//    glEnable(GL_TEXTURE_2D);
+//    glBegin(GL_QUADS);
+//    for(int i = -50; i < 50; i+=1)
+//    {
+//        for(int j = -50;  j < 50; j+=1)
+//        {
+//            glTexCoord2f(0.0, 0.0);	glVertex3i(i, 0.0, j);
+//            glTexCoord2f(0.0, 1.0);	glVertex3i(i, 0.0, j+1);
+//            glTexCoord2f(1.0, 1.0);	glVertex3f(i+1, 0.0, j+1);
+//            glTexCoord2f(1.0, 0.1);	glVertex3f(i+1, 0.0, j);
+//        }
+//    }
+//    glMaterialfv(GL_FRONT, GL_SPECULAR, white);
+//    glEnd();
+//    glDisable(GL_TEXTURE_2D);
+//    glPopMatrix();
+
     glDisable(GL_LIGHTING);
     glPushMatrix();
       glNormal3f(0.0, 1.0, 0.0);
       glBindTexture(GL_TEXTURE_2D, txId[5]);  //Use this texture
       glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
+    glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
       glColor3d(1, 1, 1);
       //glMaterialfv(GL_FRONT, GL_SPECULAR, black);
       //glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, white);
+    
       glEnable(GL_TEXTURE_2D);
       glBegin(GL_QUADS);
       glTexCoord2f(0,  0); glVertex3f(-50, 0, -50);
@@ -887,8 +921,8 @@ void engine()
     
 }
 
-//--- A rail wagon ---------------------------------------------------
-void wagon()
+//--- A rover ---------------------------------------------------
+void drawRover()
 {
     base();
     
@@ -910,7 +944,6 @@ void wagon()
     
     glColor4f(0.0, 1.0, 1.0, 1.0);
     glPushMatrix();
-    
     glTranslatef(0.0, 10.0, 0.0);
     glScalef(18.0, 5.0, 10.0);
     glutSolidCube(1.0);
@@ -934,13 +967,7 @@ void drawItem() {
     
 }
 
-void drawRover() {
-    
-    glPushMatrix();
-    glScalef(0.2, 0.2, 0.2);
-    wagon();
-    glPopMatrix();
-}
+
 
 void drawParabola() {
     
@@ -957,32 +984,33 @@ void drawParabola() {
     }
     glEnd();
     
+
+    
 }
 
 void drawRainbow() {
     glPushMatrix();
     glColor4f (0, 1, 0.2, 1.0);
     glTranslatef(0, 0, -20);
-    //glScalef(0.5, 0.5, 0.5);
     drawParabola();
     glPopMatrix();
+    
+//    glPushMatrix();
+//    glColor4f (0, 1, 0.2, 1.0);
+//    glTranslatef(0, 0, -22);
+//    drawParabola();
+//    glPopMatrix();
+    
+    // stick along side
+//    glPushMatrix();
+//    glTranslatef(0, 20, -21);
+//    glScalef(0.1, 0.1, 2);
+//    glutSolidCube(1);
+//    glPopMatrix();
+    
 }
 
-void myTimer(int value) {
-    // walking bot
-    if (animation_time < 13) {
-        walk_x++;
-    }
-    // then turn forward
-    else if (animation_time == 13) {
-        walk_dir_angle = 0;
-    }
-    // walk few steps on z axis
-    else if (animation_time < 20) {
-        walk_z++;
-    }
-    
-    // fly robot
+void flyRobotTimer() {
     // walk 13 steps on x axis
     if (animation_time < 13) {
         bot_move_y++; //lift off
@@ -1050,8 +1078,73 @@ void myTimer(int value) {
     else if (animation_time < 126) {
         bot_move_y-=0.5;
     }
+}
+
+void moveRoverTimer(int value) {
     
- 
+    
+    if (animation_time < 10) {
+        rover_move_x ++;
+    }
+    else if (animation_time < 14) {
+        rover_turn_y ++;
+        rover_move_x ++;
+    }
+    else if (animation_time < 20) {
+        rover_turn_y-=2;
+        rover_move_x++;
+    }
+    else if (animation_time < 40) {
+        rover_move_x++;
+    }
+    else if (animation_time < 50) {
+        rover_turn_y -= 20;
+    }
+    else if (animation_time < 60) {
+        rover_move_x-=2;
+    }
+    else if (animation_time < 70) {
+        rover_turn_y -= 20;
+    }
+    else if(animation_time < 80) {
+        rover_move_x ++;
+    }
+    else if(animation_time < 90){
+        rover_turn_y+=20;
+    }
+    else if(animation_time < 100) {
+        rover_move_x-=2;
+    }
+    else if (animation_time < 110) {
+        rover_turn_y += 30;
+    }
+    else if (animation_time < 126) {
+        rover_move_z--;
+    
+    }
+}
+
+
+void myTimer(int value) {
+    // walking bot
+    if (animation_time < 13) {
+        walk_x++;
+    }
+    // then turn forward
+    else if (animation_time == 13) {
+        walk_dir_angle = 0;
+    }
+    // walk few steps on z axis
+    else if (animation_time < 20) {
+        walk_z++;
+    }
+    
+    // fly robot
+    flyRobotTimer();
+    
+    // move rover
+    moveRoverTimer(value);
+    
     // for the item
     ring_turning_angle+=50;
     animation_time++; // increment timer of animation
@@ -1086,8 +1179,37 @@ void display()
 
   	glLightfv(GL_LIGHT0, GL_POSITION, lpos);   //Set light position
   	glEnable(GL_LIGHTING);	       //Enable lighting when drawing the model
-
+    
+//    // light on rover
+//    float lgt1_pos[] = {0  , 5, 5.0f, 1.0f};  //light1 position
+//    
+//    float lgt1_dir[] = {-1.0, -1.0, 0.0};
+//    
+//    glEnable(GL_LIGHT1);
+//    glLightfv(GL_LIGHT1, GL_AMBIENT, grey);
+//    glLightfv(GL_LIGHT1, GL_DIFFUSE, white);
+//    glLightfv(GL_LIGHT1, GL_SPECULAR, white);
+//    glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, 30.0);
+//    glLightf(GL_LIGHT1, GL_SPOT_EXPONENT,0.01);
+//    
+//    glPushMatrix();
+//    //glRotatef(theta, 0.0, 1.0, 0.0);
+//    //glTranslatef(0.0, 1.0, -120); //move on track
+//    
+//    glLightfv(GL_LIGHT1, GL_POSITION, lgt1_pos);   //light1 position
+//    glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, lgt1_dir); //light1 direction
+//    glPopMatrix();
+    
+    
+    // draw rover moving
+    glPushMatrix();
+    glTranslatef(rover_move_x - 25, rover_move_y, rover_move_z - 10);
+    glRotatef(rover_turn_x, 1, 0, 0);
+    glRotatef(rover_turn_y, 0, 1, 0);
+    glRotatef(rover_turn_z, 0, 0, 1);
+    glScalef(0.2, 0.2, 0.2);
     drawRover();
+    glPopMatrix();
     
     // draw robot not walking
     glPushMatrix();
@@ -1098,6 +1220,7 @@ void display()
     attachBoosters();
     drawModelNotWalking();
     glPopMatrix();
+    
     // draw rainbow
     drawRainbow();
     
