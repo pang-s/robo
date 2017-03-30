@@ -15,12 +15,12 @@ using namespace std;
 //--Globals ---------------------------------------------------------------
 GLUquadric *q;    //Required for creating cylindrical objects
 
-float  eye_x = 0,  eye_y = 8,  eye_z = 32;    //Initial camera position
+float  eye_x = 10,  eye_y = 8,  eye_z = 40;    //Initial camera position
 //float look_x = 1, look_y = 10, look_z = 1;    //"Look-at" point along -z direction
 float look_x = 0, look_y = 1, look_z = 10;    //"Look-at" point along -z direction
 
 //float look_x = 12, look_y = 1, look_z = 10;    //"Look-at" point along -z direction
-float  h_look_angle = 0;                              //Look angles
+float  h_look_angle = 0.1;                              //Look angles
 float  v_look_angle = 0;
 int cam_step = 0;								   //camera motion
 GLuint txId[6];   //Texture ids
@@ -59,7 +59,7 @@ float rover_turn_z = 0;
 //--------------------------------------------------------------------------------
 void loadTexture()
 {
-    glGenTextures(6, txId); 	// Create 6 texture ids
+    glGenTextures(8, txId); 	// Create 6 texture ids
 
     glBindTexture(GL_TEXTURE_2D, txId[0]);  //Use this texture
     loadTGA("/Users/Pang/Desktop/COSC363/assignment1/danbo-code/criminal-impact_bk.tga");
@@ -100,6 +100,11 @@ void loadTexture()
     
     glBindTexture(GL_TEXTURE_2D, txId[6]);  //Use this texture
     loadTGA("/Users/Pang/Desktop/COSC363/assignment1/danbo-code/tv.tga");
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);	//Set texture parameters
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+    
+    glBindTexture(GL_TEXTURE_2D, txId[7]);  //Use this texture
+    loadTGA("/Users/Pang/Desktop/COSC363/assignment1/danbo-code/walk.tga");
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);	//Set texture parameters
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
     
@@ -492,6 +497,8 @@ void drawModelNotWalking()
     
 }
 
+
+// the walking bot
 void drawModel()
 {
     glColor3f(.85, 0.72, 0.63);		//Head
@@ -530,6 +537,24 @@ void drawModel()
   	  glScalef(3, 4, 1.8);
   	  glutSolidCube(1);
   	glPopMatrix();
+    
+    // add front pad material
+    glPushMatrix();
+    glEnable(GL_TEXTURE_2D);
+    glTranslatef(0, 2.5 , 1);
+    glBindTexture(GL_TEXTURE_2D, txId[7]); // walk bots pic
+    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+    //glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
+    glBegin(GL_POLYGON);
+    glTexCoord2f(0,  0); glVertex3f(-1, 1, 0.0);
+    glTexCoord2f(1,  0); glVertex3f(1, 1, 0.0);
+    glTexCoord2f(1,  1); glVertex3f(1, 4, 0.0);
+    glTexCoord2f(0,  1); glVertex3f(-1, 4, 0.0);
+    glEnd();
+    glDisable(GL_TEXTURE_2D);
+    //glEnable(GL_LIGHTING);
+    
+    glPopMatrix();
 
     glColor3f(.85, 0.72, 0.63);				//Torso Skirt Front
     glPushMatrix();
@@ -1414,58 +1439,20 @@ void myTimer(int value) {
 //--the scene.
 void display()
 {
-    //initialize();
-    
-    //q = gluNewQuadric();
-    
-    //loadTexture();
-    //glEnable(GL_TEXTURE_2D);
-    //glClearColor(1.0f, 1.0f, 1.0f, 1.0f);	//Background colour
-//    glEnable(GL_LIGHTING);					//Enable OpenGL states
-//    glEnable(GL_LIGHT0);
-    // lab3
-//    glLightfv(GL_LIGHT0, GL_AMBIENT, black);
-//    glLightfv(GL_LIGHT0, GL_DIFFUSE, white);
-//    glLightfv(GL_LIGHT0, GL_SPECULAR, white);
-//    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-    //
-//    glEnable(GL_COLOR_MATERIAL);
-//    glEnable(GL_DEPTH_TEST);
-//    glEnable(GL_NORMALIZE);
-    
-    //from lab3
-    //gluQuadricDrawStyle (q, GLU_FILL );
-    //gluQuadricNormals	(q, GLU_SMOOTH );
-   // gluQuadricTexture (q, GL_TRUE);
-    //
-    //glMatrixMode(GL_PROJECTION);
-    //glLoadIdentity();
-    //gluPerspective(45., 1., 1., 100.);
-    //gluPerspective(45., 1., 1, 100.);
-
-    
     updateNormalLookXYZ();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    //float dir_x = -sin(h_look_angle), dir_y = 0,  dir_z = -cos(h_look_angle);
-    // Set the camera
-    
     
     gluLookAt(eye_x, eye_y, eye_z,  look_x, look_y, look_z,   0, 1, 0);
     
-    //gluLookAt(0., 8, 30, 0., 10, 13., 0., 1., 0.);
-    printf("look at %f %f %f %f %f %f\n", eye_x, eye_y, eye_z, look_x, look_y, look_z);
+    //printf("look at %f %f %f %f %f %f\n", eye_x, eye_y, eye_z, look_x, look_y, look_z);
     float lpos[4] = {10., 10., 10., 1.0};  //light's position
 
   	glLightfv(GL_LIGHT0, GL_POSITION, lpos);   //Set light position
   	glEnable(GL_LIGHTING);	       //Enable lighting when drawing the model
     glEnable(GL_LIGHT0);
-//    glLightfv(GL_LIGHT0, GL_AMBIENT, black);
-//    glLightfv(GL_LIGHT0, GL_DIFFUSE, white);
-//    glLightfv(GL_LIGHT0, GL_SPECULAR, white);
-//    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-//    
+
     // light on rover
     float lgt1_pos[] = {0  , 5, 5.0f, 1.0f};  //light1 position
     
