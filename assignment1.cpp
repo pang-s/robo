@@ -501,7 +501,7 @@ void drawModelNotWalking()
 // the walking bot
 void drawModel()
 {
-    glColor3f(.85, 0.72, 0.63);		//Head
+    glColor3f(0.839, 0.850, 0.862);		//Head
     glPushMatrix();
     glTranslatef(0, 8.5, 0);
     glScalef(2.8, 1.7, 1.5);
@@ -530,7 +530,7 @@ void drawModel()
       glEnd(); //End triangle coordinates
     glPopMatrix();
 
-    glColor3f(.85, 0.72, 0.63);				//Torso
+    glColor3f(0.839, 0.850, 0.862);				//Torso
     //glColor3f(1, 1, 1);
   	glPushMatrix();
   	  glTranslatef(0, 5.2, 0);
@@ -556,7 +556,7 @@ void drawModel()
     
     glPopMatrix();
 
-    glColor3f(.85, 0.72, 0.63);				//Torso Skirt Front
+    glColor3f(0.839, 0.850, 0.862);				//Torso Skirt Front
     glPushMatrix();
       glTranslatef(0, 2.8, 1.2);
       glRotatef(-35, 1, 0, 0);
@@ -564,7 +564,7 @@ void drawModel()
       glutSolidCube(1);
     glPopMatrix();
 
-    glColor3f(.85, 0.72, 0.63);				//Torso Skirt Back
+    			//Torso Skirt Back
     glPushMatrix();
       glTranslatef(0, 2.8, -1.2);
       glRotatef(35, 1, 0, 0);
@@ -572,7 +572,7 @@ void drawModel()
       glutSolidCube(1);
     glPopMatrix();
 
-    glColor3f(.85, 0.72, 0.63);				//Torso Skirt Right
+    			//Torso Skirt Right
     glPushMatrix();
       glTranslatef(1.6, 2.7, 0);
       glRotatef(15, 0, 0, 1);
@@ -580,7 +580,7 @@ void drawModel()
       glutSolidCube(1);
     glPopMatrix();
 
-    glColor3f(.85, 0.72, 0.63);				//Torso Skirt Left
+    				//Torso Skirt Left
     glPushMatrix();
       glTranslatef(-1.6, 2.7, 0);
       glRotatef(-15, 0, 0, 1);
@@ -588,7 +588,7 @@ void drawModel()
       glutSolidCube(1);
     glPopMatrix();
 
-    glColor3f(.85, 0.72, 0.63);				//Right leg circle
+    				//Right leg circle
     glPushMatrix();
       glTranslatef(0.8, 4, 0);
       glRotatef(-walk_theta, 1, 0, 0);
@@ -597,7 +597,7 @@ void drawModel()
       glutSolidSphere(.5, 10, 10);
     glPopMatrix();
 
-    glColor3f(.85, 0.72, 0.63);	      //Moved right leg
+          //Moved right leg
     glPushMatrix();
       glTranslatef(0.8, 4, 0);
       glRotatef(-walk_theta, 1, 0, 0);
@@ -607,7 +607,7 @@ void drawModel()
       glutSolidCube(1);
     glPopMatrix();
 
-    glColor3f(.85, 0.72, 0.63);				//Left leg circle
+    			//Left leg circle
     glPushMatrix();
       glTranslatef(0.8, 4, 0);
       glRotatef(walk_theta, 1, 0, 0);
