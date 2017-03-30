@@ -63,15 +63,15 @@ void loadTexture()
 
     glBindTexture(GL_TEXTURE_2D, txId[0]);  //Use this texture
     loadTGA("/Users/Pang/Desktop/COSC363/assignment1/danbo-code/criminal-impact_bk.tga");
-//    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);	//Set texture parameters
-//    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);	//Set texture parameters
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+//    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+//    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+//    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+//    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+//
 
     glBindTexture(GL_TEXTURE_2D, txId[1]);  //Use this texture
     loadTGA("/Users/Pang/Desktop/COSC363/assignment1/danbo-code/criminal-impact_ft.tga");
@@ -127,6 +127,15 @@ void initialize()
     glEnable(GL_COLOR_MATERIAL);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_NORMALIZE);
+    // from lec below
+    
+    float mat_amb[4] = {0.0, 0.0, 1.0, 1.0};//blue
+    float mat_dif[4] = {0.0, 0.0, 1.0, 1.0};//blue
+    float mat_spe[4] = {1.0, 1.0, 1.0, 1.0};//white
+    glMaterialfv(GL_FRONT, GL_AMBIENT, mat_amb);
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_dif);
+    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_spe);
+    glMaterialf(GL_FRONT, GL_SHININESS, 50);
     
     //from lab3
     gluQuadricDrawStyle (q, GLU_FILL );
@@ -141,57 +150,59 @@ void initialize()
 
 //	Create the skybox
 void skybox() {
-  glDisable(GL_LIGHTING);
-	//glEnable(GL_BLEND);
-	glColor4f(1.0, 1.0, 1.0, 0.9);
-	glPushMatrix();
-//		glMaterialfv(GL_FRONT, GL_SPECULAR, black);
-//		glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, white);
-	glEnable(GL_TEXTURE_2D);
-		// Back
-		glBindTexture(GL_TEXTURE_2D, txId[0]);
-		glBegin(GL_QUADS);
-      glTexCoord2f(0,  1); glVertex3f(-50, 50, -50);
-      glTexCoord2f(0,  0); glVertex3f(-50, 0, -50);
-      glTexCoord2f(1,  0); glVertex3f(50, 0, -50);
-      glTexCoord2f(1,  1); glVertex3f(50, 50, -50);
-		glEnd();
-		// Right
-		glBindTexture(GL_TEXTURE_2D, txId[3]);
-		glBegin(GL_QUADS);
-      glTexCoord2f(0,  1); glVertex3f(50, 50, -50);
-      glTexCoord2f(0,  0); glVertex3f(50, 0, -50);
-      glTexCoord2f(1,  0); glVertex3f(50, 0, 50);
-      glTexCoord2f(1,  1); glVertex3f(50, 50, 50);
-		glEnd();
-		// Front
-		glBindTexture(GL_TEXTURE_2D, txId[1]);
-		glBegin(GL_QUADS);
-        glTexCoord2f(1,  1); glVertex3f(-50, 50, 50);
-        glTexCoord2f(1,  0); glVertex3f(-50, 0, 50);
-        glTexCoord2f(0,  0); glVertex3f(50, 0, 50);
-        glTexCoord2f(0,  1); glVertex3f(50, 50, 50);
-		glEnd();
-		// Left
-		glBindTexture(GL_TEXTURE_2D, txId[2]);
-		glBegin(GL_QUADS);
-      glTexCoord2f(1,  1); glVertex3f(-50, 50, -50);
-      glTexCoord2f(1,  0); glVertex3f(-50, 0, -50);
-      glTexCoord2f(0,  0); glVertex3f(-50, 0, 50);
-      glTexCoord2f(0,  1); glVertex3f(-50, 50, 50);
-		glEnd();
-		// Top
-		glBindTexture(GL_TEXTURE_2D, txId[4]);
-		glBegin(GL_QUADS);
-      glTexCoord2f(0,  1); glVertex3f(-50, 50, -50);
-      glTexCoord2f(1,  1); glVertex3f(-50, 50, 50);
-      glTexCoord2f(1,  0); glVertex3f(50, 50, 50);
-      glTexCoord2f(0,  0); glVertex3f(50, 50, -50);
-		glEnd();
-	glDisable(GL_TEXTURE_2D);
-		//glMaterialfv(GL_FRONT, GL_SPECULAR, white);
-	glPopMatrix();
+    glPushMatrix();
+          glDisable(GL_LIGHTING);
+            //glEnable(GL_BLEND);
+            glColor4f(1.0, 1.0, 1.0, 0.9);
+            glPushMatrix();
+        //		glMaterialfv(GL_FRONT, GL_SPECULAR, black);
+        //		glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, white);
+            glEnable(GL_TEXTURE_2D);
+                // Back
+                glBindTexture(GL_TEXTURE_2D, txId[0]);
+                glBegin(GL_QUADS);
+              glTexCoord2f(0,  1); glVertex3f(-50, 50, -50);
+              glTexCoord2f(0,  0); glVertex3f(-50, 0, -50);
+              glTexCoord2f(1,  0); glVertex3f(50, 0, -50);
+              glTexCoord2f(1,  1); glVertex3f(50, 50, -50);
+                glEnd();
+                // Right
+                glBindTexture(GL_TEXTURE_2D, txId[3]);
+                glBegin(GL_QUADS);
+              glTexCoord2f(0,  1); glVertex3f(50, 50, -50);
+              glTexCoord2f(0,  0); glVertex3f(50, 0, -50);
+              glTexCoord2f(1,  0); glVertex3f(50, 0, 50);
+              glTexCoord2f(1,  1); glVertex3f(50, 50, 50);
+                glEnd();
+                // Front
+                glBindTexture(GL_TEXTURE_2D, txId[1]);
+                glBegin(GL_QUADS);
+                glTexCoord2f(1,  1); glVertex3f(-50, 50, 50);
+                glTexCoord2f(1,  0); glVertex3f(-50, 0, 50);
+                glTexCoord2f(0,  0); glVertex3f(50, 0, 50);
+                glTexCoord2f(0,  1); glVertex3f(50, 50, 50);
+                glEnd();
+                // Left
+                glBindTexture(GL_TEXTURE_2D, txId[2]);
+                glBegin(GL_QUADS);
+              glTexCoord2f(1,  1); glVertex3f(-50, 50, -50);
+              glTexCoord2f(1,  0); glVertex3f(-50, 0, -50);
+              glTexCoord2f(0,  0); glVertex3f(-50, 0, 50);
+              glTexCoord2f(0,  1); glVertex3f(-50, 50, 50);
+                glEnd();
+                // Top
+                glBindTexture(GL_TEXTURE_2D, txId[4]);
+                glBegin(GL_QUADS);
+              glTexCoord2f(0,  1); glVertex3f(-50, 50, -50);
+              glTexCoord2f(1,  1); glVertex3f(-50, 50, 50);
+              glTexCoord2f(1,  0); glVertex3f(50, 50, 50);
+              glTexCoord2f(0,  0); glVertex3f(50, 50, -50);
+                glEnd();
+            glDisable(GL_TEXTURE_2D);
+                //glMaterialfv(GL_FRONT, GL_SPECULAR, white);
+            glPopMatrix();
 	//glDisable(GL_BLEND);
+    glPopMatrix();
 }
 
 void drawFloor()
@@ -266,6 +277,7 @@ void normal(float x1, float y1, float z1,
 
 void drawCylinder(float radius, float height)
 {
+    glPushMatrix();
     float angle1,angle2, ca1,sa1, ca2,sa2;
     float x1, z1, x4,z4;  //four points of a quad
     float toRad = 3.14159265/180.0;  //Conversion from degrees to radians
@@ -290,6 +302,7 @@ void drawCylinder(float radius, float height)
       
     }
     glEnd();
+    glPopMatrix();
 }
 
 
@@ -674,6 +687,7 @@ void drawSwirls(float radius) {
 // A half ring
 void halfRing(float radius)
 {
+    glPushMatrix();
     float angle1,angle2, ca1,sa1, ca2,sa2;
     float x1,z1, x2,z2, x3,z3, x4,z4;  //four points of a quad
     float toRad = 3.14159265/180.0;  //Conversion from degrees to radians
@@ -712,12 +726,14 @@ void halfRing(float radius)
         glVertex3f(x3, height, z3);
     }
     glEnd();
+    glPopMatrix();
 }
 
 //------- Ring ----------------------------------------------------
 // A single circular ring of specified radius
 void ring(float radius)
 {
+    glPushMatrix();
     float angle1,angle2, ca1,sa1, ca2,sa2;
     float x1,z1, x2,z2, x3,z3, x4,z4;  //four points of a quad
     float toRad = 3.14159265/180.0;  //Conversion from degrees to radians
@@ -756,6 +772,7 @@ void ring(float radius)
         glVertex3f(x3, height, z3);
     }
     glEnd();
+    glPopMatrix();
 }
 
 
@@ -777,8 +794,8 @@ void ringAndCircle(float radius) {
 }
 
 void drawSweepModel() {
+    glPushMatrix();
     const int N = 50;  // Total number of vertices on the base curve
-    
 
     float vx_t[N] = {9.5, 8.2, 7, 6.2, 6, 6.2, 6.8, 7.6, 8.5, 8.7};
     float vy_t[N] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
@@ -828,13 +845,14 @@ void drawSweepModel() {
 
     }
     glEnd();
+    glPopMatrix();
 }
 
 
 
 
 void drawHoneycomb() {
-    
+    glPushMatrix();
     
     const int N = 9;		//Number of vertices of the base polygon
     float vz[N] = {2, 1, 0, -1, -2, -1, 1, 2};
@@ -899,24 +917,31 @@ void drawHoneycomb() {
         
         glEnd();
     }
+    glPopMatrix();
     
 }
 
+
 void drawDodecPlatform() {
     // draw turning dodecahedron
+    
+    
     glPushMatrix();
-    glColor4f (1, 1, 1, 1.0); // white colour
+    glColor3f (1, 1, 1); // white colour
     glTranslatef(0, 10, 0);
     glRotatef(ring_turning_angle, 0, 1, 0);
     glScalef(1.2, 1.2, 1.2);
     glutSolidDodecahedron();
     glPopMatrix();
+    
     // draw honeycomb extruded object
+    
     glPushMatrix();
-    glColor4f (1, 0, 0, 1.0); // red colour
+    glColor3f (1, 0, 0); // red colour
     glScalef(1.2, 1.2, 1.2);
     drawHoneycomb();
     glPopMatrix();
+    
     // draw flattened cube for top part
     glPushMatrix();
     glTranslatef(0, 6, 0);
@@ -925,6 +950,27 @@ void drawDodecPlatform() {
     glPopMatrix();
 }
 
+void drawTeaStand() {
+    glPushMatrix();
+    glColor3f(0.541, 0.686, 1);
+    glTranslatef(0, 7.5, 0);
+    glutSolidTeapot(2);
+    glPopMatrix();
+    // draw honeycomb extruded object
+    
+    glPushMatrix();
+    glColor3f (1, 0, 0); // red colour
+    glScalef(1.2, 1.2, 1.2);
+    drawHoneycomb();
+    glPopMatrix();
+    
+    // draw flattened cube for top part
+    glPushMatrix();
+    glTranslatef(0, 6, 0);
+    glScalef(1.9, 0.1, 1.9);
+    glutSolidCube(3);
+    glPopMatrix();
+}
 
 //------- Base of engine, wagons (including wheels) --------------------
 void base()
@@ -1122,24 +1168,30 @@ void drawRainbow() {
 void drawTV() {
     
   
-    // screen
+     //screen
     glPushMatrix();
-    glTranslatef(0, 0, 1.6);
+    //loadTexture();
+    glEnable(GL_TEXTURE_2D);
+    glColor3f (1, 1, 1); // white colour
+        glTranslatef(0, 0, 1.6);
+    //glDisable(GL_LIGHTING);
+        //glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
+        glBindTexture(GL_TEXTURE_2D, txId[6]); // tv picture
+        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     //glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
-    glBindTexture(GL_TEXTURE_2D, txId[6]); // tv picture
-    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-    //glColor3f(0.0, 1.0, 0.0);
-    glBegin(GL_POLYGON);
-     glTexCoord2f(0,  0); glVertex3f(-5, 1, 0.0);
-     glTexCoord2f(1,  0); glVertex3f(5, 1, 0.0);
-     glTexCoord2f(1,  1); glVertex3f(5, 7.4, 0.0);
-     glTexCoord2f(0,  1); glVertex3f(-5, 7.4, 0.0);
-    glEnd();
-    glDisable(GL_TEXTURE_2D);
+        glBegin(GL_POLYGON);
+         glTexCoord2f(0,  0); glVertex3f(-5, 1, 0.0);
+         glTexCoord2f(1,  0); glVertex3f(5, 1, 0.0);
+         glTexCoord2f(1,  1); glVertex3f(5, 7.4, 0.0);
+         glTexCoord2f(0,  1); glVertex3f(-5, 7.4, 0.0);
+        glEnd();
+        glDisable(GL_TEXTURE_2D);
+    //glEnable(GL_LIGHTING);
     glPopMatrix();
     
     // box
     glPushMatrix();
+    glColor3f(1, 1, 1);
     glTranslatef(0, 4, 0);
     glScalef(4, 3, 1);
     glutSolidCube(3);
@@ -1332,8 +1384,8 @@ void display()
     
     //q = gluNewQuadric();
     
-    loadTexture();
-    glEnable(GL_TEXTURE_2D);
+    //loadTexture();
+    //glEnable(GL_TEXTURE_2D);
     //glClearColor(1.0f, 1.0f, 1.0f, 1.0f);	//Background colour
 //    glEnable(GL_LIGHTING);					//Enable OpenGL states
 //    glEnable(GL_LIGHT0);
@@ -1358,7 +1410,6 @@ void display()
     //gluPerspective(45., 1., 1, 100.);
 
     
-     printf(" HEWAA \n");
     updateNormalLookXYZ();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_MODELVIEW);
@@ -1401,6 +1452,17 @@ void display()
 //    glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, lgt1_dir); //light1 direction
 //    glPopMatrix();
     
+//    // draw teapot on stand.
+//    glPushMatrix();
+//    drawDodecPlatform();
+//    glPopMatrix();
+    
+    // teapot on stad
+    glPushMatrix();
+    glTranslatef(-5, 0, 0);
+    drawTeaStand();
+    glPopMatrix();
+    
     // draw tv
     glPushMatrix();
     glTranslatef(15, 0, -30);
@@ -1416,7 +1478,7 @@ void display()
     glScalef(0.2, 0.2, 0.2);
     drawRover();
     glPopMatrix();
-//    
+   
     // draw robot not walking
     glPushMatrix();
     glTranslatef(bot_move_x, bot_move_y, bot_move_z);
