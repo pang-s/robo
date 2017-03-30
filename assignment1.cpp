@@ -16,7 +16,8 @@ using namespace std;
 GLUquadric *q;    //Required for creating cylindrical objects
 
 float  eye_x = 0,  eye_y = 8,  eye_z = 32;    //Initial camera position
-float look_x = 1, look_y = 10, look_z = 1;    //"Look-at" point along -z direction
+//float look_x = 1, look_y = 10, look_z = 1;    //"Look-at" point along -z direction
+float look_x = 0, look_y = 1, look_z = 10;    //"Look-at" point along -z direction
 
 //float look_x = 12, look_y = 1, look_z = 10;    //"Look-at" point along -z direction
 float  h_look_angle = 0;                              //Look angles
@@ -62,8 +63,15 @@ void loadTexture()
 
     glBindTexture(GL_TEXTURE_2D, txId[0]);  //Use this texture
     loadTGA("/Users/Pang/Desktop/COSC363/assignment1/danbo-code/criminal-impact_bk.tga");
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);	//Set texture parameters
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+//    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);	//Set texture parameters
+//    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
 
     glBindTexture(GL_TEXTURE_2D, txId[1]);  //Use this texture
     loadTGA("/Users/Pang/Desktop/COSC363/assignment1/danbo-code/criminal-impact_ft.tga");
@@ -95,8 +103,41 @@ void loadTexture()
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);	//Set texture parameters
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
     
+    glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_REPLACE);
 
+    
 }
+
+//------- Initialize OpenGL parameters -----------------------------------
+void initialize()
+{
+    q = gluNewQuadric();
+    
+    loadTexture();
+    glEnable(GL_TEXTURE_2D);
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);	//Background colour
+    glEnable(GL_LIGHTING);					//Enable OpenGL states
+    glEnable(GL_LIGHT0);
+    // lab3
+    glLightfv(GL_LIGHT0, GL_AMBIENT, black);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, white);
+    glLightfv(GL_LIGHT0, GL_SPECULAR, white);
+    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+    //
+    glEnable(GL_COLOR_MATERIAL);
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_NORMALIZE);
+    
+    //from lab3
+    gluQuadricDrawStyle (q, GLU_FILL );
+    gluQuadricNormals	(q, GLU_SMOOTH );
+    gluQuadricTexture (q, GL_TRUE);
+    //
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(45., 1., 1., 100.);
+}
+
 
 //	Create the skybox
 void skybox() {
@@ -1079,25 +1120,29 @@ void drawRainbow() {
 }
 
 void drawTV() {
-    glPushMatrix();
-    glTranslatef(0, 4, 0);
-    glScalef(4, 3, 1);
-    glutSolidCube(3);
-    glPopMatrix();
     
+  
     // screen
     glPushMatrix();
-    //glColor3f(0.0, 1.0, 0.0);
     glTranslatef(0, 0, 1.6);
     //glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
     glBindTexture(GL_TEXTURE_2D, txId[6]); // tv picture
     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+    //glColor3f(0.0, 1.0, 0.0);
     glBegin(GL_POLYGON);
      glTexCoord2f(0,  0); glVertex3f(-5, 1, 0.0);
      glTexCoord2f(1,  0); glVertex3f(5, 1, 0.0);
      glTexCoord2f(1,  1); glVertex3f(5, 7.4, 0.0);
      glTexCoord2f(0,  1); glVertex3f(-5, 7.4, 0.0);
     glEnd();
+    glDisable(GL_TEXTURE_2D);
+    glPopMatrix();
+    
+    // box
+    glPushMatrix();
+    glTranslatef(0, 4, 0);
+    glScalef(4, 3, 1);
+    glutSolidCube(3);
     glPopMatrix();
     
     //sticks
@@ -1232,9 +1277,7 @@ void moveRoverTimer(int value) {
     }
 }
 
-
-void myTimer(int value) {
-    // walking bot
+void walkBotTimer() {
     if (animation_time < 13) {
         walk_x++;
     }
@@ -1246,6 +1289,12 @@ void myTimer(int value) {
     else if (animation_time < 20) {
         walk_z++;
     }
+}
+
+
+void myTimer(int value) {
+    // walking bot
+    walkBotTimer();
     
     // fly robot
     flyRobotTimer();
@@ -1268,6 +1317,7 @@ void myTimer(int value) {
     }
     else {
         glutPostRedisplay();
+        glutTimerFunc(400, myTimer, 0);
     }
 
 }
@@ -1278,19 +1328,59 @@ void myTimer(int value) {
 //--the scene.
 void display()
 {
+    //initialize();
+    
+    //q = gluNewQuadric();
+    
+    loadTexture();
+    glEnable(GL_TEXTURE_2D);
+    //glClearColor(1.0f, 1.0f, 1.0f, 1.0f);	//Background colour
+//    glEnable(GL_LIGHTING);					//Enable OpenGL states
+//    glEnable(GL_LIGHT0);
+    // lab3
+//    glLightfv(GL_LIGHT0, GL_AMBIENT, black);
+//    glLightfv(GL_LIGHT0, GL_DIFFUSE, white);
+//    glLightfv(GL_LIGHT0, GL_SPECULAR, white);
+//    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+    //
+//    glEnable(GL_COLOR_MATERIAL);
+//    glEnable(GL_DEPTH_TEST);
+//    glEnable(GL_NORMALIZE);
+    
+    //from lab3
+    //gluQuadricDrawStyle (q, GLU_FILL );
+    //gluQuadricNormals	(q, GLU_SMOOTH );
+   // gluQuadricTexture (q, GL_TRUE);
+    //
+    //glMatrixMode(GL_PROJECTION);
+    //glLoadIdentity();
+    //gluPerspective(45., 1., 1., 100.);
+    //gluPerspective(45., 1., 1, 100.);
+
+    
+     printf(" HEWAA \n");
+    updateNormalLookXYZ();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    float dir_x = -sin(h_look_angle), dir_y = 0,  dir_z = -cos(h_look_angle);
+    //float dir_x = -sin(h_look_angle), dir_y = 0,  dir_z = -cos(h_look_angle);
     // Set the camera
-    updateNormalLookXYZ();
+    
+    
     gluLookAt(eye_x, eye_y, eye_z,  look_x, look_y, look_z,   0, 1, 0);
-
+    
+    //gluLookAt(0., 8, 30, 0., 10, 13., 0., 1., 0.);
+    printf("look at %f %f %f %f %f %f\n", eye_x, eye_y, eye_z, look_x, look_y, look_z);
     float lpos[4] = {10., 10., 10., 1.0};  //light's position
 
   	glLightfv(GL_LIGHT0, GL_POSITION, lpos);   //Set light position
   	glEnable(GL_LIGHTING);	       //Enable lighting when drawing the model
-    
+    glEnable(GL_LIGHT0);
+//    glLightfv(GL_LIGHT0, GL_AMBIENT, black);
+//    glLightfv(GL_LIGHT0, GL_DIFFUSE, white);
+//    glLightfv(GL_LIGHT0, GL_SPECULAR, white);
+//    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+//    
 //    // light on rover
 //    float lgt1_pos[] = {0  , 5, 5.0f, 1.0f};  //light1 position
 //    
@@ -1316,6 +1406,7 @@ void display()
     glTranslatef(15, 0, -30);
     drawTV();
     glPopMatrix();
+    
     // draw rover moving
     glPushMatrix();
     glTranslatef(rover_move_x - 25, rover_move_y, rover_move_z - 10);
@@ -1325,7 +1416,7 @@ void display()
     glScalef(0.2, 0.2, 0.2);
     drawRover();
     glPopMatrix();
-    
+//    
     // draw robot not walking
     glPushMatrix();
     glTranslatef(bot_move_x, bot_move_y, bot_move_z);
@@ -1354,60 +1445,101 @@ void display()
 
     drawFloor();
     skybox();
-    glRotatef(dir_x, 0, 1, 0);
-  	glRotatef(dir_z, 1, 0, 0);
+    
     glutSwapBuffers(); //Useful for animation
 }
 
 void special(int key, int x, int y)
 {
     float dir_x = -sin(h_look_angle), dir_y = 0,  dir_z = -cos(h_look_angle);
-    float s = 1; // was 0.1
+    float s = 2; // was 0.1
+   
+//    // if reached bottom edge you can only move upwards
+//    if(eye_z < -50) {
+//        if(key == GLUT_KEY_LEFT) {
+//            h_look_angle += 0.1;   //in radians
+//        }
+//        else if(key == GLUT_KEY_RIGHT) {
+//            h_look_angle -= 0.1;
+//        }
+//        else if(key == GLUT_KEY_DOWN) {
+//            eye_x = eye_x - s * dir_x;
+//            //eye_y = eye_y - s * dir_y;
+//            //eye_z = eye_z - s * dir_z;
+//        }
+//        else if(key == GLUT_KEY_UP) {
+//            eye_x = eye_x + s * dir_x;
+//            //eye_y = eye_y + s * dir_y;
+//            if(h_look_angle < )
+//            eye_z = eye_z + s * dir_z;
+//        }
+//    }
+    
+
     if(key == GLUT_KEY_LEFT) {
         h_look_angle += 0.1;   //in radians
+        printf("Left key gives %f ", h_look_angle);
+        printf("eyes xyz : %f %f %f", eye_x, eye_y, eye_z);
+        printf("look %f %f %f", look_x, look_y, look_z);
+        printf("\n");
     }
     else if(key == GLUT_KEY_RIGHT) {
         h_look_angle -= 0.1;
+        printf("Right key gives %f ", h_look_angle);
+        printf("eyes xyz : %f %f %f", eye_x, eye_y, eye_z);
+        printf("look %f %f %f", look_x, look_y, look_z);
+        printf("\n");
     }
     else if(key == GLUT_KEY_DOWN) {
       eye_x = eye_x - s * dir_x;
       //eye_y = eye_y - s * dir_y;
       eye_z = eye_z - s * dir_z;
+        printf("Down key gives %f ", h_look_angle);
+        printf("eyes xyz : %f %f %f", eye_x, eye_y, eye_z);
+        printf("look %f %f %f", look_x, look_y, look_z);
+        printf("\n");
     }
     else if(key == GLUT_KEY_UP) {
       eye_x = eye_x + s * dir_x;
       //eye_y = eye_y + s * dir_y;
       eye_z = eye_z + s * dir_z;
+        printf("Up key gives %f ", h_look_angle);
+        printf("eyes xyz : %f %f %f", eye_x, eye_y, eye_z);
+        printf("look %f %f %f", look_x, look_y, look_z);
+        printf("\n");
     }
+    // check boundaries
+    if (eye_z > 45) {
+        
+        printf("HELLO 45 z\n");
+        eye_z = 45;
+    }
+    if (eye_z < -45) {
+        
+        printf("HELLO -45 z\n");
+        eye_z = -45;
+    }
+    if (eye_x > 45) {
+        
+        printf("HELLO 45 x\n");
+        eye_x = 45;
+    }
+    if (eye_x < -45) {
+        printf("HELLO -45 x\n");
+        eye_x = -45;
+    }
+    
     updateNormalLookXYZ();
-    //cameraMovement();
     glutPostRedisplay();
 }
 
-
-//------- Initialize OpenGL parameters -----------------------------------
-void initialize()
-{
-    q = gluNewQuadric();
-    
-    loadTexture();
-    glEnable(GL_TEXTURE_2D);
-  	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);	//Background colour
-  	glEnable(GL_LIGHTING);					//Enable OpenGL states
-  	glEnable(GL_LIGHT0);
-    glEnable(GL_COLOR_MATERIAL);
-  	glEnable(GL_DEPTH_TEST);
-  	glEnable(GL_NORMALIZE);
-  	glMatrixMode(GL_PROJECTION);
-  	glLoadIdentity();
-    gluPerspective(45., 1., 1., 100.);
-}
 
 
 
 //  ------- Main: Initialize glut window and register call backs -----------
 int main(int argc, char** argv)
 {
+    
     glutInit(&argc, argv);
     glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGB| GLUT_DEPTH);
     glutInitWindowSize (600, 600);
@@ -1415,7 +1547,7 @@ int main(int argc, char** argv)
     glutCreateWindow ("Assignment 1");
     initialize();
     glutDisplayFunc(display);
-    glutTimerFunc(1000, myTimer, 0);
+    glutTimerFunc(400, myTimer, 0);
     glutSpecialFunc(special);
     glutMainLoop();
     return 0;
