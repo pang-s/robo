@@ -207,7 +207,29 @@ void skybox() {
 
 void drawFloor()
 {
-//    
+    glPushMatrix();
+    //glColor4f(0.537, 0.803, 0.596, 1.0);
+    glColor4f(0.611, 0.925, 0.682, 1.0);
+    glNormal3f(0.0, 1.0, 0.0);
+    
+    glMaterialfv(GL_FRONT, GL_SPECULAR, black); //suppress specular reflections
+    
+    glBegin(GL_QUADS);
+    for(int i = -100; i < 100; i++)
+    {
+        for(int j = -100;  j < 100; j++)
+        {
+            glVertex3f(i, 0.0, j);
+            glVertex3f(i, 0.0, j+1);
+            glVertex3f(i+1, 0.0, j+1);
+            glVertex3f(i+1, 0.0, j);
+        }
+    }
+    glEnd();
+    glMaterialfv(GL_FRONT, GL_SPECULAR, white); // set back
+    glPopMatrix();
+    
+    // tried
 //    glPushMatrix();
 //    glNormal3f(0.0, 1.0, 0.0);
 //    float white[4] = {1.0, 1.0, 1.0, 1.0};
@@ -222,10 +244,14 @@ void drawFloor()
 //    {
 //        for(int j = -50;  j < 50; j+=1)
 //        {
-//            glTexCoord2f(0.0, 0.0);	glVertex3i(i, 0.0, j);
-//            glTexCoord2f(0.0, 1.0);	glVertex3i(i, 0.0, j+1);
-//            glTexCoord2f(1.0, 1.0);	glVertex3f(i+1, 0.0, j+1);
-//            glTexCoord2f(1.0, 0.1);	glVertex3f(i+1, 0.0, j);
+//            glTexCoord2f(0.0, 0.0);
+//            glVertex3i(i, 0.0, j);
+//            glTexCoord2f(0.0, 1.0);
+//            glVertex3i(i, 0.0, j+1);
+//            glTexCoord2f(1.0, 1.0);
+//            glVertex3f(i+1, 0.0, j+1);
+//            glTexCoord2f(1.0, 0.1);
+//            glVertex3f(i+1, 0.0, j);
 //        }
 //    }
 //    glMaterialfv(GL_FRONT, GL_SPECULAR, white);
@@ -233,26 +259,28 @@ void drawFloor()
 //    glDisable(GL_TEXTURE_2D);
 //    glPopMatrix();
 
-    glDisable(GL_LIGHTING);
-    glPushMatrix();
-      glNormal3f(0.0, 1.0, 0.0);
-      glBindTexture(GL_TEXTURE_2D, txId[5]);  //Use this texture
-      glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
-    glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
-      glColor3d(1, 1, 1);
-      //glMaterialfv(GL_FRONT, GL_SPECULAR, black);
-      //glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, white);
     
-      glEnable(GL_TEXTURE_2D);
-      glBegin(GL_QUADS);
-      glTexCoord2f(0,  0); glVertex3f(-50, 0, -50);
-      glTexCoord2f(1,  0); glVertex3f(-50, 0, 50);
-      glTexCoord2f(1,  1); glVertex3f(50, 0, 50);
-      glTexCoord2f(0,  1); glVertex3f(50, 0, -50);
-      //glMaterialfv(GL_FRONT, GL_SPECULAR, white);
-    	glEnd();
-    glDisable(GL_TEXTURE_2D);
-    glPopMatrix();
+    // below is first floor
+//    glDisable(GL_LIGHTING);
+//    glPushMatrix();
+//      glNormal3f(0.0, 1.0, 0.0);
+//      glBindTexture(GL_TEXTURE_2D, txId[5]);  //Use this texture
+//      glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
+//    glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
+//      glColor3d(1, 1, 1);
+//      //glMaterialfv(GL_FRONT, GL_SPECULAR, black);
+//      //glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, white);
+//    
+//      glEnable(GL_TEXTURE_2D);
+//      glBegin(GL_QUADS);
+//      glTexCoord2f(0,  0); glVertex3f(-50, 0, -50);
+//      glTexCoord2f(1,  0); glVertex3f(-50, 0, 50);
+//      glTexCoord2f(1,  1); glVertex3f(50, 0, 50);
+//      glTexCoord2f(0,  1); glVertex3f(50, 0, -50);
+//      //glMaterialfv(GL_FRONT, GL_SPECULAR, white);
+//    	glEnd();
+//    glDisable(GL_TEXTURE_2D);
+//    glPopMatrix();
 }
 
 
@@ -1079,7 +1107,13 @@ void drawRover()
     gluCylinder(q, 10, 0, 10, 20, 8);
     glPopMatrix();
 
-    
+    // the light in cone
+    glPushMatrix();
+    glColor3f(0.996, 1, 0.639 );
+    glTranslatef(18, 35, 0);
+    glutSolidSphere(2, 10, 10);
+    glPopMatrix();
+    // the floaty
     glColor4f(0.0, 1.0, 1.0, 1.0);
     glPushMatrix();
     glTranslatef(0.0, 10.0, 0.0);
@@ -1432,18 +1466,18 @@ void display()
 //    glLightfv(GL_LIGHT0, GL_SPECULAR, white);
 //    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 //    
-//    // light on rover
-//    float lgt1_pos[] = {0  , 5, 5.0f, 1.0f};  //light1 position
-//    
-//    float lgt1_dir[] = {-1.0, -1.0, 0.0};
-//    
-//    glEnable(GL_LIGHT1);
-//    glLightfv(GL_LIGHT1, GL_AMBIENT, grey);
-//    glLightfv(GL_LIGHT1, GL_DIFFUSE, white);
-//    glLightfv(GL_LIGHT1, GL_SPECULAR, white);
-//    glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, 30.0);
-//    glLightf(GL_LIGHT1, GL_SPOT_EXPONENT,0.01);
-//    
+    // light on rover
+    float lgt1_pos[] = {0  , 5, 5.0f, 1.0f};  //light1 position
+    
+    float lgt1_dir[] = {-1.0, -1.0, 0.0};
+    
+    glEnable(GL_LIGHT1);
+    glLightfv(GL_LIGHT1, GL_AMBIENT, grey);
+    glLightfv(GL_LIGHT1, GL_DIFFUSE, white);
+    glLightfv(GL_LIGHT1, GL_SPECULAR, white);
+    glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, 30.0);
+    glLightf(GL_LIGHT1, GL_SPOT_EXPONENT,20);
+
 //    glPushMatrix();
 //    //glRotatef(theta, 0.0, 1.0, 0.0);
 //    //glTranslatef(0.0, 1.0, -120); //move on track
@@ -1451,15 +1485,12 @@ void display()
 //    glLightfv(GL_LIGHT1, GL_POSITION, lgt1_pos);   //light1 position
 //    glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, lgt1_dir); //light1 direction
 //    glPopMatrix();
+//    
+
     
-//    // draw teapot on stand.
-//    glPushMatrix();
-//    drawDodecPlatform();
-//    glPopMatrix();
-    
-    // teapot on stad
+    // teapot on stand
     glPushMatrix();
-    glTranslatef(-5, 0, 0);
+    glTranslatef(-7, 0, -30);
     drawTeaStand();
     glPopMatrix();
     
@@ -1477,8 +1508,25 @@ void display()
     glRotatef(rover_turn_z, 0, 0, 1);
     glScalef(0.2, 0.2, 0.2);
     drawRover();
+    //its light
+    glTranslatef(50, 0, 0);
+    glLightfv(GL_LIGHT1, GL_POSITION, lgt1_pos);   //light1 position
+    glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, lgt1_dir); //light1 direction
     glPopMatrix();
-   
+    
+//    // draw rover light
+//    glPushMatrix();
+//    
+//    glTranslatef(rover_move_x - 10, rover_move_y, rover_move_z - 10);
+//    
+//    glLightfv(GL_LIGHT1, GL_POSITION, lgt1_pos);   //light1 position
+//    glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, lgt1_dir); //light1 direction
+//    glRotatef(rover_turn_x, 1, 0, 0);
+//    glRotatef(rover_turn_y, 0, 1, 0);
+//    glRotatef(rover_turn_z, 0, 0, 1);
+//    
+//    glPopMatrix();
+//    
     // draw robot not walking
     glPushMatrix();
     glTranslatef(bot_move_x, bot_move_y, bot_move_z);
