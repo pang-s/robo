@@ -1213,12 +1213,19 @@ void drawRainbow() {
     glTranslatef(0, 0, -20);
     glRotatef(90, 0, 1, 0);
     glRotatef(90, 0, 0, 1);
+    glColor3f(1, 0, 0);
     halfRing(26);
+    glColor3f(1, 0.478, 0.019);
     halfRing(25);
+    glColor3f(1, 1, 0);
     halfRing(24);
+    glColor3f(0, 1, 0);
     halfRing(23);
+    glColor3f(0,0,1);
     halfRing(22);
+    glColor3f(0.294, 0, 0.509);
     halfRing(21);
+    glColor3f(0.498, 0, 1);
     halfRing(20);
     glPopMatrix();
     
