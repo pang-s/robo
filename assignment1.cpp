@@ -53,7 +53,8 @@ float rover_turn_x = 0;
 float rover_turn_y = 0;
 float rover_turn_z = 0;
 
-
+// for butterfly
+float butterAngle = 0;
 
 
 //--------------------------------------------------------------------------------
@@ -902,7 +903,127 @@ void drawSweepModel() {
 }
 
 
+void drawWing() {
+    glPushMatrix();
+    const int N = 16;		//Number of vertices of the base polygon
+    float vy[N] = {0};
+    float vx[N] = {0,1,2,3,3.8,4.1,4,3.8,3, 3.5 ,4, 3.6, 3,2,1,0};
+    float vz[N] = {4.1, 4.8, 5, 5.2, 4.8, 4, 3.2, 2.8, 2.5, 2, 1.2, 0.6, 0.2, 0.3, 0.9, 1.3};
+    
+    GLfloat polygonVertices[] {
+        0, 0, 4.1,
+        1, 0, 4.8,
+        2, 0, 5,
+        3, 0, 5.2,
+        3.8, 0, 4.8,
+        4.1, 0, 4,
+        4, 0, 3.2,
+        3.8, 0, 2.8,
+        3, 0, 2.5,
+        4, 0, 1.2,
+        3.6, 0, 0.6,
+        3, 0, 0.2,
+        2, 0, 0.3,
+        1, 0, 0.9,
+        0, 0, 1.3
+        
+    };
+    float wx[N], wy[N], wz[N];
+    double theta = (-1 * M_PI)/180;
+    float height = 1;
+    // wing cover top
+    glPushMatrix();
+    glTranslatef(0, 1, 0);
+    glNormal3f(0.0, 1.0, 0.0);
+    //glEnable(GL_TEXTURE_2D);
+    // this loop does 9 height
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(3, GL_FLOAT, 0, polygonVertices);
+    glDrawArrays(GL_POLYGON, 0, 15);
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glPopMatrix();
+    
+    // wing cover bottom
+    glPushMatrix();
+    glNormal3f(0.0, 1.0, 0.0);
+    //glEnable(GL_TEXTURE_2D);
+    // this loop does 9 height
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(3, GL_FLOAT, 0, polygonVertices);
+    glDrawArrays(GL_POLYGON, 0, 15);
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glPopMatrix();
+    
+    for(int j = 0; j < 1; j++){
+        
+        
+        for(int i = 0; i < N; i++)
+        {
+            //printf("%d %g, %g, %g\n", i, vx[i], vy[i], vz[i]);
+            wx[i] = vx[i] * cos(theta) + vz[i] * sin(theta);
+            wy[i] = vy[i] + height; // was 20
+            wz[i] = -vx[i] * sin(theta) + vz[i] * cos(theta);
+            //printf("w is %g, %g, %g\n", wx[i], wy[i], wz[i]);
+            
+            if(i > 0) normal( vx[i-1], vy[i-1], vz[i-1],
+                             vx[i], vy[i], vz[i],
+                             wx[i], wy[i], wz[i] );
+            
+        }
+        glBegin(GL_QUAD_STRIP);
+        for(int i = 0; i < N; i++)
+        {
+            
+            //glTexCoord2f(s[i], 0);
+            glVertex3f(vx[i], vy[i], vz[i]);
+            //glTexCoord2f(s[i], 1);
+            glVertex3f(wx[i], wy[i], wz[i]);
+            
+            
+        }
+        
+        //draw this when do extrra texture
+        //glTexCoord2f(s[N], 0);
+        //glVertex3f(vx[0], vy[0], vz[0]);
+        //glTexCoord2f(s[N], 1);
+        //glVertex3f(wx[0], wy[0], wz[0]);
+        
+        for(int i = 0; i < N; i++)
+        {
+            vx[i] = wx[i];
+            vy[i] = wy[i];
+            vz[i] = wz[i];
+        }
+        
+        
+        glEnd();
+    }
+    glPopMatrix();
+    
+    
+}
 
+void drawButterfly() {
+    glColor3f(0, 1, 0.4);
+    glPushMatrix();
+    glRotatef(-butterAngle, 0, 0, 1);
+    drawWing();
+    glPopMatrix();
+    
+    // middle bit
+    glPushMatrix();
+    glTranslatef(0, 0.5, 3);
+    //glRotatef(180, 0, 0,1);
+    glScalef(0.5, 0.5, 5);
+    glutSolidCube(1);
+    glPopMatrix();
+    
+    glPushMatrix();
+    glTranslatef(0, 1, 0);
+    glRotatef(-180 + butterAngle, 0, 0, 1);
+    drawWing();
+    glPopMatrix();
+}
 
 void drawHoneycomb() {
     glPushMatrix();
@@ -1425,11 +1546,13 @@ void myTimer(int value) {
     animation_time++; // increment timer of animation
     if(value == 0){
         walk_theta-=40;
+        butterAngle-=30;
         glutPostRedisplay();
         glutTimerFunc(400, myTimer, 1);
     }
     else if(value == 1){
         walk_theta+=40;
+        butterAngle+=30;
         glutPostRedisplay();
         glutTimerFunc(400, myTimer, 0);
     }
@@ -1479,8 +1602,16 @@ void display()
 //    glLightfv(GL_LIGHT1, GL_POSITION, lgt1_pos);   //light1 position
 //    glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, lgt1_dir); //light1 direction
 //    glPopMatrix();
-//    
-
+//
+    // butterfly
+    glPushMatrix();
+    //glRotatef(butterAngle, 1, 0, 0);
+    glTranslatef(0, 7, -30);
+    glRotatef(90, 1, 0, 0);
+    glScalef(0.5, 0.5, 0.5);
+    drawButterfly();
+    glPopMatrix();
+    
     
     // teapot on stand
     glPushMatrix();
