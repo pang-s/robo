@@ -1083,42 +1083,6 @@ void stick() {
 }
 
 
-void engine()
-{
-    
-    
-    base();
-    
-    //Cab
-    glColor4f(0.8, 0.8, 0.0, 1.0);
-    glPushMatrix();
-    glTranslatef(7.0, 8.5, 0.0);
-    glScalef(6.0, 7.0, 10.0);
-    glutSolidCube(1.0);
-    glPopMatrix();
-    
-    glPushMatrix();
-    glTranslatef(6.0, 14.0, 0.0);
-    glScalef(4.0, 4.0, 8.0);
-    glutSolidCube(1.0);
-    glPopMatrix();
-    
-    //Boiler
-    glPushMatrix();
-    glColor4f(0.5, 0., 0., 1.0);
-    glTranslatef(4.0, 10.0, 0.0);
-    glRotatef(-90.0, 0., 1., 0.);
-    gluCylinder(q, 5.0, 5.0, 14.0, 20, 5);
-    glTranslatef(0.0, 0.0, 14.0);
-    gluDisk(q, 0.0, 5.0, 20, 3);
-    glColor4f(1.0, 1.0, 0.0, 1.0);
-    glTranslatef(0.0, 4.0, 0.2);
-    gluDisk(q, 0.0, 1.0, 20,2);
-    glPopMatrix();
-    
-}
-
-
 void drawRover()
 {
     base();
