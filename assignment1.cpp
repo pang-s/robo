@@ -19,7 +19,7 @@ GLUquadric *q;    //Required for creating cylindrical objects
 float size = 50;//size for skybox
 float  eye_x = -20,  eye_y = 10,  eye_z = 20;
 //float  eye_x = 12,  eye_y = 10,  eye_z = 12;    //Initial camera position
-float look_x = -19.2, look_y = 1, look_z = 18;    //"Look-at" point along -z direction
+float look_x = -19.13, look_y = 10, look_z = 18;    //"Look-at" point along -z direction
 
 //float  eye_x = 12,  eye_y = 1,  eye_z = 12;    //Initial camera position
 //float look_x = 12, look_y = 1, look_z = 10;
@@ -47,6 +47,7 @@ int walk_dir_angle = 0;
 
 int animation_time = 0;
 float ring_turning_angle = 0;
+float dodec_angle = 0;
 
 // for flying bot
 float bot_move_x = 0;
@@ -55,6 +56,9 @@ float bot_move_z = 0;
 float bot_turn_x = 0;
 float bot_turn_y = 0;
 float bot_turn_z = 0;
+float bot_turn_after = 0;
+bool fly_up = true;
+bool fly_down = false;
 
 // for moving rover
 float rover_move_x = 0;
@@ -63,9 +67,11 @@ float rover_move_z = 0;
 float rover_turn_x = 0;
 float rover_turn_y = 0;
 float rover_turn_z = 0;
+float rover_turn_y_after = 0;
 
 // for butterfly
 float butterAngle = 0;
+float butterTurn = 0;
 
 
 //--------------------------------------------------------------------------------
@@ -556,7 +562,7 @@ void drawModel()
     glEnable(GL_TEXTURE_2D);
     glTranslatef(0, 2.5 , 1);
     glBindTexture(GL_TEXTURE_2D, txId[7]); // walk bots pic
-    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
     //glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
     glBegin(GL_POLYGON);
     glTexCoord2f(0,  0); glVertex3f(-1, 1, 0.0);
@@ -758,7 +764,7 @@ void halfRing(float radius)
     float x1,z1, x2,z2, x3,z3, x4,z4;  //four points of a quad
     float toRad = 3.14159265/180.0;  //Conversion from degrees to radians
     float height = 0.2; // was 1
-    float width = 0.05; // was .5
+    float width = 0.15; // was .5
     glBegin(GL_QUADS);
     for(int i = 0; i < 180; i += 5)    //5 deg intervals
     {
@@ -1016,7 +1022,6 @@ void drawWing() {
 }
 
 void drawButterfly() {
-    glColor3f(0, 1, 0.4);
     glPushMatrix();
     glRotatef(-butterAngle, 0, 0, 1);
     drawWing();
@@ -1115,7 +1120,7 @@ void drawDodecPlatform() {
     glPushMatrix();
     glColor3f (1, 1, 1); // white colour
     glTranslatef(0, 10, 0);
-    glRotatef(ring_turning_angle, 0, 1, 0);
+    glRotatef(dodec_angle, 0, 1, 0);
     glScalef(1.2, 1.2, 1.2);
     glutSolidDodecahedron();
     glPopMatrix();
@@ -1376,7 +1381,7 @@ void drawTV() {
     //glDisable(GL_LIGHTING);
         //glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
         glBindTexture(GL_TEXTURE_2D, txId[6]); // tv picture
-        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
     //glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
         glBegin(GL_POLYGON);
          glTexCoord2f(0,  0); glVertex3f(-5, 1, 0.0);
@@ -1413,6 +1418,9 @@ void drawTV() {
     
     
 }
+//void repeatFly(int value) {
+//    if (value == 1)
+//}
 
 void flyRobotTimer() {
     // walk 13 steps on x axis
@@ -1479,9 +1487,43 @@ void flyRobotTimer() {
     else if (animation_time < 77) {
         bot_move_y++;
     }
-    else if (animation_time < 126) {
+    else if (animation_time < 127) {
         bot_move_y-=0.5;
     }
+    else if (animation_time < 138) {
+        
+    }
+    else if (animation_time < 170){
+        bot_move_y++;
+    }
+    else if (animation_time < 180) {
+        //bot_move_x++;
+        bot_move_y+=0.2;
+        bot_turn_z+=10;
+    }
+    else if( animation_time < 190){
+        //bot_turn_z+=2;
+        bot_turn_x+=7;
+        bot_move_x-=0.2;
+    }
+    else{
+        bot_turn_after += 3;
+    }
+//    else {
+//        if (fly_up && bot_move_y < 30){
+//            if(bot_move_y > 29){
+//                fly_up = false;
+//                fly_down = true;
+//                bot_turn_y += 20;
+//                bot_turn_x += 90;
+//            }
+//            bot_move_y++;
+//        }
+//        else if(fly_down) {
+//            bot_turn_after += 2;
+//        }
+//
+//    }
 }
 
 void moveRoverTimer(int value) {
@@ -1495,14 +1537,14 @@ void moveRoverTimer(int value) {
         rover_move_x ++;
     }
     else if (animation_time < 20) {
-        rover_turn_y-=2;
+        rover_turn_y--;
         rover_move_x++;
     }
     else if (animation_time < 40) {
         rover_move_x++;
     }
     else if (animation_time < 50) {
-        rover_turn_y -= 20;
+        rover_turn_y -= 19;
     }
     else if (animation_time < 60) {
         rover_move_x-=2;
@@ -1525,6 +1567,12 @@ void moveRoverTimer(int value) {
     else if (animation_time < 126) {
         rover_move_z--;
     
+    }
+    else if (animation_time < 134) {
+        rover_turn_y +=18;
+    }
+    else {
+        rover_turn_y_after+= 2;
     }
 }
 
@@ -1554,27 +1602,34 @@ void myTimer(int value) {
     moveRoverTimer(value);
     
     // for the item
-    ring_turning_angle+=50;
+    ring_turning_angle+=5;
+    dodec_angle+=50;
+    butterTurn+=1;
     animation_time++; // increment timer of animation
     if(value == 0){
         walk_theta-=40;
         butterAngle-=30;
         glutPostRedisplay();
-        glutTimerFunc(400, myTimer, 1);
+        glutTimerFunc(220, myTimer, 1);
     }
     else if(value == 1){
         walk_theta+=40;
         butterAngle+=30;
         glutPostRedisplay();
-        glutTimerFunc(400, myTimer, 0);
+        glutTimerFunc(220, myTimer, 0);
     }
     else {
         glutPostRedisplay();
-        glutTimerFunc(400, myTimer, 0);
+        glutTimerFunc(220, myTimer, 0);
     }
 
 }
 
+void boostTimer(int value) {
+    flyRobotTimer();
+    glutPostRedisplay();
+    glutTimerFunc(200, boostTimer, 0);
+}
 
 //--Display: ---------------------------------------------------------------
 //--This is the main display module containing function calls for generating
@@ -1617,10 +1672,47 @@ void display()
 //
     // butterfly
     glPushMatrix();
-    //glRotatef(butterAngle, 1, 0, 0);
-    glTranslatef(0, 7, -30);
-    glRotatef(90, 1, 0, 0);
-    glScalef(0.5, 0.5, 0.5);
+    glColor3f(0, 1, 0.4);
+    glRotatef(butterTurn, 0, 1, 0);
+    glTranslatef(0, 30, -40);
+    glRotatef(90, 0, 1, 0);
+    glScalef(0.3, 0.3, 0.3);
+    drawButterfly();
+    glPopMatrix();
+    
+    glPushMatrix();
+    glColor3f(1, 0, 1);
+    glRotatef(-butterTurn, 0, 1, 0);
+    glTranslatef(10, 30, -40);
+    glRotatef(90, 0, 1, 0);
+    glScalef(0.3, 0.3, 0.3);
+    drawButterfly();
+    glPopMatrix();
+    
+    glPushMatrix();
+    glColor3f(0.7, 0.5, 1);
+    glRotatef(butterTurn, 0, 1, 0);
+    glTranslatef(-10, 29, -40);
+    glRotatef(90, 0, 1, 0);
+    glScalef(0.3, 0.3, 0.3);
+    drawButterfly();
+    glPopMatrix();
+    
+    glPushMatrix();
+    glColor3f(1, 0.5, 0.2);
+    glRotatef(-butterTurn, 0, 1, 0);
+    glTranslatef(10, 29, 40);
+    glRotatef(90, 0, 1, 0);
+    glScalef(0.3, 0.3, 0.3);
+    drawButterfly();
+    glPopMatrix();
+    
+    glPushMatrix();
+    glColor3f(1, 1, 0.2);
+    glRotatef(butterTurn, 0, 1, 0);
+    glTranslatef(15, 28, -20);
+    glRotatef(90, 0, 1, 0);
+    glScalef(0.3, 0.3, 0.3);
     drawButterfly();
     glPopMatrix();
     
@@ -1640,11 +1732,12 @@ void display()
     
     // draw rover moving
     glPushMatrix();
+    glRotatef(rover_turn_y_after, 0, 1, 0);
     glTranslatef(rover_move_x - 25, rover_move_y, rover_move_z - 10);
     glRotatef(rover_turn_x, 1, 0, 0);
     glRotatef(rover_turn_y, 0, 1, 0);
     glRotatef(rover_turn_z, 0, 0, 1);
-    glScalef(0.2, 0.2, 0.2);
+    glScalef(0.1, 0.1, 0.1);
     drawRover();
     //its light
     glTranslatef(50, 0, 0);
@@ -1669,8 +1762,9 @@ void display()
     glPushMatrix();
     glTranslatef(0, 0, -20);
   glScalef(0.8, 0.8, 0.8);
-        // draw robot not walking
+        // draw robot flying
         glPushMatrix();
+        glRotatef(bot_turn_after, 0, 1, 0);
         glTranslatef(bot_move_x, bot_move_y, bot_move_z);
         glRotatef(bot_turn_x, 1, 0, 0);
         glRotatef(bot_turn_y, 0, 1, 0);
@@ -1687,7 +1781,7 @@ void display()
     glPopMatrix();
     // draw walking robot
     glPushMatrix();
-    glTranslatef(walk_x + 10, 11.5, walk_z-25); // walk
+    glTranslatef(walk_x + 10, 11.5, walk_z-23); // walk
     glRotatef(walk_dir_angle, 0, 1, 0);
     glScalef(0.7, 0.7, 0.7);
     drawModel();
@@ -1695,7 +1789,7 @@ void display()
     
     // space decor
     glPushMatrix();
-    glTranslatef(10, 0, -25);
+    glTranslatef(10, 0, -23); // make sure walk robot got same z
     drawItem();
     glPopMatrix();
 
@@ -1821,7 +1915,7 @@ int main(int argc, char** argv)
     glutCreateWindow ("Assignment 1");
     initialize();
     glutDisplayFunc(display);
-    glutTimerFunc(400, myTimer, 0);
+    glutTimerFunc(220, myTimer, 0);
     glutSpecialFunc(special);
     glutMainLoop();
     return 0;
