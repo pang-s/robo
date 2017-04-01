@@ -15,25 +15,36 @@ using namespace std;
 //--Globals ---------------------------------------------------------------
 GLUquadric *q;    //Required for creating cylindrical objects
 
-float  eye_x = 10,  eye_y = 8,  eye_z = 40;    //Initial camera position
-//float look_x = 1, look_y = 10, look_z = 1;    //"Look-at" point along -z direction
-float look_x = 0, look_y = 1, look_z = 10;    //"Look-at" point along -z direction
+
+float size = 50;//size for skybox
+float  eye_x = -20,  eye_y = 10,  eye_z = 20;
+//float  eye_x = 12,  eye_y = 10,  eye_z = 12;    //Initial camera position
+float look_x = -19.2, look_y = 1, look_z = 18;    //"Look-at" point along -z direction
+
+//float  eye_x = 12,  eye_y = 1,  eye_z = 12;    //Initial camera position
+//float look_x = 12, look_y = 1, look_z = 10;
+
+//
+//float  eye_x = 10,  eye_y = 8,  eye_z = 40;    //Initial camera position
+////float look_x = 1, look_y = 10, look_z = 1;    //"Look-at" point along -z direction
+//float look_x = 0, look_y = 1, look_z = 10;    //"Look-at" point along -z direction
 
 //float look_x = 12, look_y = 1, look_z = 10;    //"Look-at" point along -z direction
-float  h_look_angle = 0.1;                              //Look angles
+float  h_look_angle = -0.35;                              //Look angles
 float  v_look_angle = 0;
 int cam_step = 0;								   //camera motion
-GLuint txId[6];   //Texture ids
+GLuint txId[10];   //Texture ids
 
 float grey[4] = {0.2, 0.2, 0.2, 1.0};
 float black[4] = {0};
 float white[4]  = {1.0, 1.0, 1.0, 1.0};
 
+// walking bot
 int walk_theta = 20;
 int walk_z = 0;
 int walk_x = 0;
+int walk_dir_angle = 0;
 
-int walk_dir_angle = 90;
 int animation_time = 0;
 float ring_turning_angle = 0;
 
@@ -60,7 +71,7 @@ float butterAngle = 0;
 //--------------------------------------------------------------------------------
 void loadTexture()
 {
-    glGenTextures(8, txId); 	// Create 6 texture ids
+    glGenTextures(10, txId); 	// Create 6 texture ids
 
     glBindTexture(GL_TEXTURE_2D, txId[0]);  //Use this texture
     loadTGA("/Users/Pang/Desktop/COSC363/assignment1/danbo-code/criminal-impact_bk.tga");
@@ -156,6 +167,7 @@ void initialize()
 
 //	Create the skybox
 void skybox() {
+    
     glPushMatrix();
           glDisable(GL_LIGHTING);
             //glEnable(GL_BLEND);
@@ -167,42 +179,42 @@ void skybox() {
                 // Back
                 glBindTexture(GL_TEXTURE_2D, txId[0]);
                 glBegin(GL_QUADS);
-              glTexCoord2f(0,  1); glVertex3f(-50, 50, -50);
-              glTexCoord2f(0,  0); glVertex3f(-50, 0, -50);
-              glTexCoord2f(1,  0); glVertex3f(50, 0, -50);
-              glTexCoord2f(1,  1); glVertex3f(50, 50, -50);
+              glTexCoord2f(0,  1); glVertex3f(-size, size, -size);
+              glTexCoord2f(0,  0); glVertex3f(-size, 0, -size);
+              glTexCoord2f(1,  0); glVertex3f(size, 0, -size);
+              glTexCoord2f(1,  1); glVertex3f(size, size, -size);
                 glEnd();
                 // Right
                 glBindTexture(GL_TEXTURE_2D, txId[3]);
                 glBegin(GL_QUADS);
-              glTexCoord2f(0,  1); glVertex3f(50, 50, -50);
-              glTexCoord2f(0,  0); glVertex3f(50, 0, -50);
-              glTexCoord2f(1,  0); glVertex3f(50, 0, 50);
-              glTexCoord2f(1,  1); glVertex3f(50, 50, 50);
+              glTexCoord2f(0,  1); glVertex3f(size, size, -size);
+              glTexCoord2f(0,  0); glVertex3f(size, 0, -size);
+              glTexCoord2f(1,  0); glVertex3f(size, 0, size);
+              glTexCoord2f(1,  1); glVertex3f(size, size, size);
                 glEnd();
                 // Front
                 glBindTexture(GL_TEXTURE_2D, txId[1]);
                 glBegin(GL_QUADS);
-                glTexCoord2f(1,  1); glVertex3f(-50, 50, 50);
-                glTexCoord2f(1,  0); glVertex3f(-50, 0, 50);
-                glTexCoord2f(0,  0); glVertex3f(50, 0, 50);
-                glTexCoord2f(0,  1); glVertex3f(50, 50, 50);
+                glTexCoord2f(1,  1); glVertex3f(-size, size, size);
+                glTexCoord2f(1,  0); glVertex3f(-size, 0, size);
+                glTexCoord2f(0,  0); glVertex3f(size, 0, size);
+                glTexCoord2f(0,  1); glVertex3f(size, size, size);
                 glEnd();
                 // Left
                 glBindTexture(GL_TEXTURE_2D, txId[2]);
                 glBegin(GL_QUADS);
-              glTexCoord2f(1,  1); glVertex3f(-50, 50, -50);
-              glTexCoord2f(1,  0); glVertex3f(-50, 0, -50);
-              glTexCoord2f(0,  0); glVertex3f(-50, 0, 50);
-              glTexCoord2f(0,  1); glVertex3f(-50, 50, 50);
+              glTexCoord2f(1,  1); glVertex3f(-size, size, -size);
+              glTexCoord2f(1,  0); glVertex3f(-size, 0, -size);
+              glTexCoord2f(0,  0); glVertex3f(-size, 0, size);
+              glTexCoord2f(0,  1); glVertex3f(-size, size, size);
                 glEnd();
                 // Top
                 glBindTexture(GL_TEXTURE_2D, txId[4]);
                 glBegin(GL_QUADS);
-              glTexCoord2f(0,  1); glVertex3f(-50, 50, -50);
-              glTexCoord2f(1,  1); glVertex3f(-50, 50, 50);
-              glTexCoord2f(1,  0); glVertex3f(50, 50, 50);
-              glTexCoord2f(0,  0); glVertex3f(50, 50, -50);
+              glTexCoord2f(0,  1); glVertex3f(-size, size, -size);
+              glTexCoord2f(1,  1); glVertex3f(-size, size, size);
+              glTexCoord2f(1,  0); glVertex3f(size, size, size);
+              glTexCoord2f(0,  0); glVertex3f(size, size, -size);
                 glEnd();
             glDisable(GL_TEXTURE_2D);
                 //glMaterialfv(GL_FRONT, GL_SPECULAR, white);
@@ -691,7 +703,7 @@ void drawSwirls(float radius) {
     
     int poly_height = 0;
     float angle1,angle2, ca1,sa1, ca2,sa2;
-    float x1,z1, x2,z2, x3,z3, x4,z4;  //four points of a quad
+    float x1,z1,z2, x3,z3, x4,z4;  //four points of a quad
     float toRad = 3.14159265/180.0;  //Conversion from degrees to radians
     float height = 0.1; // was 1
     float width = 0.05; // was .5
@@ -1533,7 +1545,7 @@ void walkBotTimer() {
 
 void myTimer(int value) {
     // walking bot
-    walkBotTimer();
+    //walkBotTimer();
     
     // fly robot
     flyRobotTimer();
@@ -1615,13 +1627,14 @@ void display()
     
     // teapot on stand
     glPushMatrix();
-    glTranslatef(-7, 0, -30);
+    glTranslatef(13, 0, -40);
     drawTeaStand();
     glPopMatrix();
     
     // draw tv
     glPushMatrix();
-    glTranslatef(15, 0, -30);
+    glTranslatef(-10, 0, -40);
+    glScalef(0.8, 0.8, 0.8);
     drawTV();
     glPopMatrix();
     
@@ -1651,30 +1664,38 @@ void display()
 //    glRotatef(rover_turn_z, 0, 0, 1);
 //    
 //    glPopMatrix();
-//    
-    // draw robot not walking
+//
+    
     glPushMatrix();
-    glTranslatef(bot_move_x, bot_move_y, bot_move_z);
-    glRotatef(bot_turn_x, 1, 0, 0);
-    glRotatef(bot_turn_y, 0, 1, 0);
-    glRotatef(bot_turn_z, 0, 0, 1);
-    attachBoosters();
-    drawModelNotWalking();
+    glTranslatef(0, 0, -20);
+  glScalef(0.8, 0.8, 0.8);
+        // draw robot not walking
+        glPushMatrix();
+        glTranslatef(bot_move_x, bot_move_y, bot_move_z);
+        glRotatef(bot_turn_x, 1, 0, 0);
+        glRotatef(bot_turn_y, 0, 1, 0);
+        glRotatef(bot_turn_z, 0, 0, 1);
+        attachBoosters();
+        drawModelNotWalking();
+        glPopMatrix();
+        
+        // draw rainbow
+        glPushMatrix();
+        drawRainbow();
+        glPopMatrix();
+    
     glPopMatrix();
-    
-    // draw rainbow
-    drawRainbow();
-    
-    // draw robot
+    // draw walking robot
     glPushMatrix();
-    glTranslatef(walk_x, 0, walk_z); // walk
+    glTranslatef(walk_x + 10, 11.5, walk_z-25); // walk
     glRotatef(walk_dir_angle, 0, 1, 0);
     glScalef(0.7, 0.7, 0.7);
     drawModel();
     glPopMatrix();
     
+    // space decor
     glPushMatrix();
-    glTranslatef(20, 0, 0);
+    glTranslatef(10, 0, -25);
     drawItem();
     glPopMatrix();
 
@@ -1744,25 +1765,44 @@ void special(int key, int x, int y)
         printf("\n");
     }
     // check boundaries
-    if (eye_z > 45) {
+    float bound = 20;
+    if (eye_z > bound) {
         
         printf("HELLO 45 z\n");
-        eye_z = 45;
+        eye_z = bound;
     }
-    if (eye_z < -45) {
+    if (eye_z < -bound) {
 
         printf("HELLO -45 z\n");
-        eye_z = -45;
+        eye_z = -bound;
     }
-    if (eye_x > 45) {
+    if (eye_x > bound) {
         printf("HELLO 45 x\n");
-        eye_x = 45;
+        eye_x = bound;
     }
-    if (eye_x < -45) {
+    if (eye_x < -bound) {
         printf("HELLO -45 x\n");
-        eye_x = -45;
+        eye_x = -bound;
     }
     
+//    if (eye_z > 45) {
+//        
+//        printf("HELLO 45 z\n");
+//        eye_z = 45;
+//    }
+//    if (eye_z < -45) {
+//        
+//        printf("HELLO -45 z\n");
+//        eye_z = -45;
+//    }
+//    if (eye_x > 45) {
+//        printf("HELLO 45 x\n");
+//        eye_x = 45;
+//    }
+//    if (eye_x < -45) {
+//        printf("HELLO -45 x\n");
+//        eye_x = -45;
+//    }
     updateNormalLookXYZ();
     glutPostRedisplay();
 }
