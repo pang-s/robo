@@ -17,6 +17,9 @@ GLUquadric *q;    //Required for creating cylindrical objects
 
 
 float size = 50;//size for skybox
+
+//float  eye_x = -20,  eye_y = 30,  eye_z = 20; // butterfly view
+
 float  eye_x = -20,  eye_y = 10,  eye_z = 20;
 //float  eye_x = 12,  eye_y = 10,  eye_z = 12;    //Initial camera position
 float look_x = -19.13, look_y = 10, look_z = 18;    //"Look-at" point along -z direction
@@ -240,7 +243,7 @@ void skybox() {
 void drawFloor()
 {
     glPushMatrix();
-    float floor_height = -0.10;
+    float floor_height = -0.01;
     //glColor4f(0.537, 0.803, 0.596, 1.0);
     glColor4f(0.611, 0.925, 0.682, 1.0);
     glNormal3f(0.0, 1.0, 0.0);
@@ -1972,6 +1975,23 @@ void special(int key, int x, int y)
     glutPostRedisplay();
 }
 
+void keyboard(unsigned char key, int xmouse, int ymouse){
+    switch (key){
+        case 'b':
+            eye_x = -20;  eye_y = 30;  eye_z = 20;
+            break;
+            
+        case 'g':
+            eye_x = -20;  eye_y = 10;  eye_z = 20;
+            break;
+            
+        default:
+            break;
+    }
+    
+}
+
+
 
 
 
@@ -1988,6 +2008,7 @@ int main(int argc, char** argv)
     glutDisplayFunc(display);
     glutTimerFunc(220, myTimer, 0);
     glutSpecialFunc(special);
+    glutKeyboardFunc(keyboard);
     glutMainLoop();
     return 0;
 }
