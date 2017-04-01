@@ -77,42 +77,42 @@ void loadTexture()
     glGenTextures(10, txId); 	// Create 6 texture ids
 
     glBindTexture(GL_TEXTURE_2D, txId[0]);  //Use this texture
-    loadTGA("/Users/Pang/Desktop/COSC363/assignment1/danbo-code/criminal-impact_bk.tga");
+    loadTGA("criminal-impact_bk.tga");
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);	//Set texture parameters
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 
     glBindTexture(GL_TEXTURE_2D, txId[1]);  //Use this texture
-    loadTGA("/Users/Pang/Desktop/COSC363/assignment1/danbo-code/criminal-impact_ft.tga");
+    loadTGA("criminal-impact_ft.tga");
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);	//Set texture parameters
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 
     glBindTexture(GL_TEXTURE_2D, txId[2]);  //Use this texture
-    loadTGA("/Users/Pang/Desktop/COSC363/assignment1/danbo-code/criminal-impact_lf.tga");
+    loadTGA("criminal-impact_lf.tga");
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);	//Set texture parameters
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 
     glBindTexture(GL_TEXTURE_2D, txId[3]);  //Use this texture
-    loadTGA("/Users/Pang/Desktop/COSC363/assignment1/danbo-code/criminal-impact_rt.tga");
+    loadTGA("criminal-impact_rt.tga");
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);	//Set texture parameters
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 
     glBindTexture(GL_TEXTURE_2D, txId[4]);  //Use this texture
-    loadTGA("/Users/Pang/Desktop/COSC363/assignment1/danbo-code/criminal-impact_up.tga");
+    loadTGA("criminal-impact_up.tga");
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);	//Set texture parameters
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 
     glBindTexture(GL_TEXTURE_2D, txId[5]);  //Use this texture
-    loadTGA("/Users/Pang/Desktop/COSC363/assignment1/danbo-code/criminal-impact_dn.tga");
+    loadTGA("criminal-impact_dn.tga");
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);	//Set texture parameters
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
     
     glBindTexture(GL_TEXTURE_2D, txId[6]);  //Use this texture
-    loadTGA("/Users/Pang/Desktop/COSC363/assignment1/danbo-code/tv.tga");
+    loadTGA("tv.tga");
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);	//Set texture parameters
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
     
     glBindTexture(GL_TEXTURE_2D, txId[7]);  //Use this texture
-    loadTGA("/Users/Pang/Desktop/COSC363/assignment1/danbo-code/walk.tga");
+    loadTGA("walk.tga");
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);	//Set texture parameters
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
     
@@ -1487,7 +1487,6 @@ void drawShadowObjects(bool shadow) {
 //------------SHADOWS----------------------------------------------
 void makeShadows() {
 
-    float light[] = {80, 80, 0, 1};
     //  Draw Object
     glEnable(GL_LIGHTING);
     glColor3f(1, 0, 1);
@@ -1647,7 +1646,9 @@ void display()
 
 void special(int key, int x, int y)
 {
-    float dir_x = -sin(h_look_angle), dir_y = 0,  dir_z = -cos(h_look_angle);
+    float dir_x = -sin(h_look_angle);
+    //float dir_y = 0; 
+    float dir_z = -cos(h_look_angle);
     float s = 2; // was 0.1
 
     if(key == GLUT_KEY_LEFT) {
@@ -1707,7 +1708,7 @@ int main(int argc, char** argv)
     
     glutInit(&argc, argv);
     glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGB| GLUT_DEPTH);
-    glutInitWindowSize (600, 600);
+    glutInitWindowSize (700, 700);
     glutInitWindowPosition (10, 10);
     glutCreateWindow ("Assignment 1");
     initialize();
