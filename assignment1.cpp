@@ -848,7 +848,7 @@ void ringAndCircle(float radius) {
 
 void drawSweepModel() {
     glPushMatrix();
-    const int N = 50;  // Total number of vertices on the base curve
+    const int N = 11;  // Total number of vertices on the base curve
 
     float vx_t[N] = {9.5, 8.2, 7, 6.2, 6, 6.2, 6.8, 7.6, 8.5, 8.7};
     float vy_t[N] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
@@ -922,7 +922,7 @@ void drawHoneycomb() {
 //    	glEnd();
 
 
-    double theta = (-10 * M_PI)/180;
+    double theta = (0 * M_PI)/180;
     float height = 5;
     glNormal3f(0.0, 1.0, 0.0);
     //glEnable(GL_TEXTURE_2D);
@@ -1619,12 +1619,11 @@ void special(int key, int x, int y)
         eye_z = 45;
     }
     if (eye_z < -45) {
-        
+
         printf("HELLO -45 z\n");
         eye_z = -45;
     }
     if (eye_x > 45) {
-        
         printf("HELLO 45 x\n");
         eye_x = 45;
     }
