@@ -1,7 +1,5 @@
 //  ========================================================================
-//  COSC363: Computer Graphics (2017);  University of Canterbury.
-//
-//  Pang Suwanaposee psu43 33330630
+//  Pang Suwanaposee psu43
 //  ========================================================================
 
 #include <iostream>
